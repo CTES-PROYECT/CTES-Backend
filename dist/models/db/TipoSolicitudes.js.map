@@ -1,0 +1,1 @@
+{"version":3,"file":"TipoSolicitudes.js","sourceRoot":"","sources":["../../../models/db/TipoSolicitudes.ts"],"names":[],"mappings":";;;;;AAAA,yCAAoC;AACpC,qEAAwC;AAGxC,MAAM,oBAAoB,GAAG,iBAAE,CAAC,MAAM,CAAC,iBAAiB,EAAC;IACrD,eAAe,EAAC;QACZ,IAAI,EAAC,qBAAS,CAAC,MAAM;KACxB;CACJ,EACG;IACI,UAAU,EAAC,KAAK;CACnB,CACJ,CAAC;AAEF,kBAAe,oBAAoB,CAAC"}

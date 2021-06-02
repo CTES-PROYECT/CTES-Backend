@@ -1,0 +1,1 @@
+{"version":3,"file":"EstadoProyecto.js","sourceRoot":"","sources":["../../../models/db/EstadoProyecto.ts"],"names":[],"mappings":";;;;;AAAA,yCAAsC;AACtC,qEAAwC;AAGxC,MAAM,mBAAmB,GAAG,iBAAE,CAAC,MAAM,CAAC,gBAAgB,EAAC;IACnD,SAAS,EAAC;QACN,IAAI,EAAC,qBAAS,CAAC,MAAM;KACxB;CACJ,EACG;IACI,UAAU,EAAC,KAAK;CACnB,CACJ,CAAC;AAEF,kBAAe,mBAAmB,CAAC"}
