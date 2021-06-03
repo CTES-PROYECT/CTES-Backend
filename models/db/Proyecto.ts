@@ -7,6 +7,7 @@ import ModelDateProyecto from "./DateProyecto";
 import ModelEstadoProyecto from "./EstadoProyecto";
 import ModelLocalizacion from "./Localizacion";
 import ModelMetodoConstructivo from "./MetodoConstructivo";
+import ModelOfIngenieria from "./OfIngenieria";
 
 const ModelProyecto = db.define(
   "Proyectos",
@@ -75,9 +76,17 @@ const ModelProyecto = db.define(
         key: "id",
       },
     },
+    FkOfIngenieria: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: ModelOfIngenieria,
+        key: "id",
+      },
+    },
   },
   {
     timestamps: false,
+    freezeTableName: true,
   }
 );
 

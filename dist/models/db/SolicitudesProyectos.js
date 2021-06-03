@@ -9,47 +9,48 @@ const EstadosSolicitudes_1 = __importDefault(require("./EstadosSolicitudes"));
 const Proyecto_1 = __importDefault(require("./Proyecto"));
 const TipoSolicitudes_1 = __importDefault(require("./TipoSolicitudes"));
 const Users_1 = __importDefault(require("./Users"));
-const ModelSolicitudesProyectos = connect_1.default.define('SolicitudesProyectos', {
+const ModelSolicitudesProyectos = connect_1.default.define("SolicitudesProyectos", {
     Comment: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING,
     },
     UserInformador: {
         type: sequelize_1.DataTypes.INTEGER,
         references: {
             model: Users_1.default,
-            key: 'id'
-        }
+            key: "id",
+        },
     },
     UserValidador: {
         type: sequelize_1.DataTypes.INTEGER,
         references: {
             model: Users_1.default,
-            key: 'id'
-        }
+            key: "id",
+        },
     },
     FkEstadoSolicitud: {
         type: sequelize_1.DataTypes.INTEGER,
         references: {
             model: EstadosSolicitudes_1.default,
-            key: 'id'
-        }
+            key: "id",
+        },
     },
     FkProyecto: {
         type: sequelize_1.DataTypes.INTEGER,
         references: {
             model: Proyecto_1.default,
-            key: 'id'
-        }
+            key: "id",
+        },
     },
     FkTipoSolicitud: {
         type: sequelize_1.DataTypes.INTEGER,
         references: {
             model: TipoSolicitudes_1.default,
-            key: 'id'
-        }
-    }
+            key: "id",
+        },
+    },
 }, {
-    timestamps: false
+    timestamps: false,
+    freezeTableName: true,
 });
 exports.default = ModelSolicitudesProyectos;
 //# sourceMappingURL=SolicitudesProyectos.js.map

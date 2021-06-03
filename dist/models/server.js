@@ -42,7 +42,7 @@ class Server {
     }
     router() {
         this.app.use("/api/users", Usuarios_1.default);
-        this.app.use("/proyect", ProyectosRouter_1.default);
+        this.app.use("/api/projects", ProyectosRouter_1.default);
     }
     middlewares() {
         this.app.use(express_1.default.json());

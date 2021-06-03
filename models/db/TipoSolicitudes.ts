@@ -1,15 +1,17 @@
-import {DataTypes} from 'sequelize';
-import db from '../../database/connect';
+import { DataTypes } from "sequelize";
+import db from "../../database/connect";
 
-
-const ModelTipoSolicitudes = db.define('TipoSolicitudes',{
-    NameSolicitudes:{
-        type:DataTypes.STRING
+const ModelTipoSolicitudes = db.define(
+  "TipoSolicitudes",
+  {
+    NameSolicitudes: {
+      type: DataTypes.STRING,
     },
-},
-    {
-        timestamps:false
-    }
+  },
+  {
+    timestamps: false,
+    freezeTableName: true,
+  }
 );
 
 export default ModelTipoSolicitudes;

@@ -1,10 +1,9 @@
-import { Sequelize } from 'sequelize'; 
+import { Sequelize } from "sequelize";
 
-const db = new Sequelize('CTES','postgres','postgres',{
-    host:'localhost',
-    dialect:'postgres',
-    logging:false,
-    
+const db = new Sequelize("CTES", "postgres", "kevin1183", {
+  host: "localhost",
+  dialect: "postgres",
+  logging: false,
 });
 
 export default db;

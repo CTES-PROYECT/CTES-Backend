@@ -1,21 +1,23 @@
-import {DataTypes} from 'sequelize';
-import db from '../../database/connect';
+import { DataTypes } from "sequelize";
+import db from "../../database/connect";
 
-
-const ModelCaracteristicas = db.define('Caracteristicas',{
-    Longitud:{
-        type:DataTypes.STRING
+const ModelCaracteristicas = db.define(
+  "Caracteristicas",
+  {
+    Longitud: {
+      type: DataTypes.STRING,
     },
-    Seccion:{
-        type:DataTypes.STRING
+    Seccion: {
+      type: DataTypes.STRING,
     },
-    Pendiente:{
-        type:DataTypes.STRING
-    }
-},
-    {
-        timestamps:false
-    }
+    Pendiente: {
+      type: DataTypes.STRING,
+    },
+  },
+  {
+    timestamps: false,
+    freezeTableName: true,
+  }
 );
 
 export default ModelCaracteristicas;

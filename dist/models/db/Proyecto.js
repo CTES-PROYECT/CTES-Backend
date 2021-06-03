@@ -12,6 +12,7 @@ const DateProyecto_1 = __importDefault(require("./DateProyecto"));
 const EstadoProyecto_1 = __importDefault(require("./EstadoProyecto"));
 const Localizacion_1 = __importDefault(require("./Localizacion"));
 const MetodoConstructivo_1 = __importDefault(require("./MetodoConstructivo"));
+const OfIngenieria_1 = __importDefault(require("./OfIngenieria"));
 const ModelProyecto = connect_1.default.define("Proyectos", {
     NameProyecto: {
         type: sequelize_1.DataTypes.STRING,
@@ -77,8 +78,16 @@ const ModelProyecto = connect_1.default.define("Proyectos", {
             key: "id",
         },
     },
+    FkOfIngenieria: {
+        type: sequelize_1.DataTypes.INTEGER,
+        references: {
+            model: OfIngenieria_1.default,
+            key: "id",
+        },
+    },
 }, {
     timestamps: false,
+    freezeTableName: true,
 });
 exports.default = ModelProyecto;
 //# sourceMappingURL=Proyecto.js.map

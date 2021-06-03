@@ -1,15 +1,17 @@
-import {DataTypes} from 'sequelize';
-import db from '../../database/connect';
+import { DataTypes } from "sequelize";
+import db from "../../database/connect";
 
-
-const ModelRegiones = db.define('Regiones',{
-    NameRegion:{
-        type:DataTypes.STRING
+const ModelRegiones = db.define(
+  "Regiones",
+  {
+    NameRegion: {
+      type: DataTypes.STRING,
     },
-},
-    {
-        timestamps:false
-    }
+  },
+  {
+    timestamps: false,
+    freezeTableName: true,
+  }
 );
 
 export default ModelRegiones;

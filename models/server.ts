@@ -32,7 +32,7 @@ class Server {
   }
   router() {
     this.app.use("/api/users", routerUser);
-    this.app.use("/proyect", routerProyect);
+    this.app.use("/api/projects", routerProyect);
   }
   middlewares() {
     this.app.use(express.json());

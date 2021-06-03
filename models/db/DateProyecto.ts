@@ -1,21 +1,23 @@
-import {DataTypes} from 'sequelize';
-import db from '../../database/connect';
+import { DataTypes } from "sequelize";
+import db from "../../database/connect";
 
-
-const ModelDateProyecto = db.define('DateProyecto',{
-    PlazoEjecucion:{
-        type:DataTypes.DATE
+const ModelDateProyecto = db.define(
+  "DateProyecto",
+  {
+    PlazoEjecucion: {
+      type: DataTypes.DATE,
     },
-    FechaLicitacion:{
-        type:DataTypes.DATE
+    FechaLicitacion: {
+      type: DataTypes.DATE,
     },
-    FechaInicioObra:{
-        type:DataTypes.DATE
-    }
-},
-    {
-        timestamps:false
-    }
+    FechaInicioObra: {
+      type: DataTypes.DATE,
+    },
+  },
+  {
+    timestamps: false,
+    freezeTableName: true,
+  }
 );
 
 export default ModelDateProyecto;

@@ -1,24 +1,25 @@
+import { DataTypes } from "sequelize";
+import db from "../../database/connect";
+import ModelComuna from "./Comuna";
 
-import {DataTypes} from 'sequelize';
-import db from '../../database/connect';
-import ModelComuna from './Comuna';
-
-
-const ModelOfIngenieria = db.define('OfIngenieria',{
-    Direccion:{
-        type:DataTypes.STRING
+const ModelOfIngenieria = db.define(
+  "OfIngenieria",
+  {
+    Direccion: {
+      type: DataTypes.STRING,
     },
-    FkComuna:{
-        type:DataTypes.INTEGER,
-        references:{
-            model:ModelComuna,
-            key:'id'
-        }
+    FkComuna: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: ModelComuna,
+        key: "id",
+      },
     },
-},
-    {
-        timestamps:false
-    }
+  },
+  {
+    timestamps: false,
+    freezeTableName: true,
+  }
 );
 
 export default ModelOfIngenieria;
