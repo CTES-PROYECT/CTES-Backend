@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import db from "../database/connect";
 import routerUser from "../router/Usuarios";
 import routerProyect from "../router/ProyectosRouter";
+import morgan from "morgan";
 
 class Server {
   private app: Application;
@@ -9,6 +10,7 @@ class Server {
 
   constructor() {
     this.app = express();
+    this.app.use(morgan("tiny"));
     this.port = process.env.PORT || "5001";
 
     this.middlewares();

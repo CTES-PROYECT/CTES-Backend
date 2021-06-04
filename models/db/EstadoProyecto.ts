@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import db from "../../database/connect";
 
 const ModelEstadoProyecto = db.define(
-  "EstadoProyectos",
+  "EstadoProyecto",
   {
     NameState: {
       type: DataTypes.STRING,

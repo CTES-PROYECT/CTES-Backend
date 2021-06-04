@@ -1,10 +1,28 @@
 import { Request, Response } from "express";
-import { Sequelize } from "sequelize";
-import { ResponseError } from "../constant/msgResponse";
+import { ResponseCorrect, ResponseError } from "../constant/msgResponse";
+import {
+  AttributesExcludesProyectPreview,
+  AttributesIncludesOneProyect,
+  AttributesIncludesProyectPreview,
+  AttributesExcludesFKProyect,
+} from "../constant/tables";
 import ModelProyecto from "../models/db/Proyecto";
+import { resultValidationToken } from "../models/interfaces";
+import { verifyBearerToken } from "./utils/validations";
 
 export const getProjectPreview = async (req: Request, res: Response) => {
   try {
+    const tokenVerify: resultValidationToken = verifyBearerToken(
+      req.headers.authorization
+    );
+
+    if (!tokenVerify.validation) {
+      return res.status(401).json({
+        status: "ERROR",
+        msg: ResponseError.Unauthorized,
+      });
+    }
+
     const size: any = req.query.size ? req.query["size"] : 4; // Make sure to parse the limit to number
     const skip: any = req.query.skip ? req.query["skip"] : 0;
 
@@ -12,47 +30,14 @@ export const getProjectPreview = async (req: Request, res: Response) => {
       limit: parseInt(size),
       offset: parseInt(skip),
       attributes: {
-        exclude: [
-          "TipoContrato",
-          "TipoProyecto",
-          "MontoInversion",
-          "FkDateProyecto",
-          "FkMetodoConstructivo",
-          "FkClasificacion",
-          "FkEstadoProyecto",
-          "FkCaracteristicas",
-          "FkLocalizacion",
-          "FkContratista",
-          "FkOfIngenieria",
-        ],
-        include: [
-          [
-            Sequelize.literal(`(
-                  SELECT "NameState" FROM "EstadoProyecto" AS e WHERE e.id = "Proyectos"."FkEstadoProyecto")`),
-            "Estado",
-          ],
-          [
-            Sequelize.literal(`(
-              SELECT "Regiones"."NameRegion"
-              FROM "Localizacion" inner join "Regiones" on "Localizacion"."FkRegion" = "Regiones"."id"
-              WHERE
-                   "Localizacion"."id" = "Proyectos"."FkLocalizacion")`),
-            "Region",
-          ],
-          [
-            Sequelize.literal(`(
-              SELECT "Comunas"."NameComuna"
-              FROM "Localizacion" inner join "Comunas" on "Localizacion"."FkComuna" = "Comunas"."id"
-              WHERE
-                   "Localizacion"."id" = "Proyectos"."FkLocalizacion")`),
-            "Comuna",
-          ],
-        ],
+        exclude: AttributesExcludesProyectPreview,
+        include: AttributesIncludesProyectPreview,
       },
     });
 
     return res.json({
-      msg: "Proyectos cargados exitosamente",
+      status: "OK",
+      msg: ResponseCorrect.LoadProjectSuccefly,
       data: Proyects,
     });
   } catch (error) {
@@ -62,4 +47,28 @@ export const getProjectPreview = async (req: Request, res: Response) => {
       msg: ResponseError.ErrorServidor,
     });
   }
+};
+
+export const getAllInfoProject = async (req: Request, res: Response) => {
+  const tokenVerify: resultValidationToken = verifyBearerToken(
+    req.headers.authorization
+  );
+
+  if (!tokenVerify.validation) {
+    return res.status(401).json({
+      status: "ERROR",
+      msg: ResponseError.Unauthorized,
+    });
+  }
+
+  const { id } = req.params;
+
+  const proyectForId = await ModelProyecto.findByPk(id, {
+    attributes: {
+      exclude: AttributesExcludesFKProyect,
+      include: AttributesIncludesOneProyect,
+    },
+  });
+
+  return res.json(proyectForId);
 };

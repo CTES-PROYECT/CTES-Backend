@@ -12,58 +12,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProjectPreview = void 0;
-const sequelize_1 = require("sequelize");
+exports.getAllInfoProject = exports.getProjectPreview = void 0;
 const msgResponse_1 = require("../constant/msgResponse");
+const tables_1 = require("../constant/tables");
 const Proyecto_1 = __importDefault(require("../models/db/Proyecto"));
+const validations_1 = require("./utils/validations");
 const getProjectPreview = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const tokenVerify = validations_1.verifyBearerToken(req.headers.authorization);
+        if (!tokenVerify.validation) {
+            return res.status(401).json({
+                status: "ERROR",
+                msg: msgResponse_1.ResponseError.Unauthorized,
+            });
+        }
         const size = req.query.size ? req.query["size"] : 4; // Make sure to parse the limit to number
         const skip = req.query.skip ? req.query["skip"] : 0;
         const Proyects = yield Proyecto_1.default.findAll({
             limit: parseInt(size),
             offset: parseInt(skip),
             attributes: {
-                exclude: [
-                    "TipoContrato",
-                    "TipoProyecto",
-                    "MontoInversion",
-                    "FkDateProyecto",
-                    "FkMetodoConstructivo",
-                    "FkClasificacion",
-                    "FkEstadoProyecto",
-                    "FkCaracteristicas",
-                    "FkLocalizacion",
-                    "FkContratista",
-                    "FkOfIngenieria",
-                ],
-                include: [
-                    [
-                        sequelize_1.Sequelize.literal(`(
-                  SELECT "NameState" FROM "EstadoProyecto" AS e WHERE e.id = "Proyectos"."FkEstadoProyecto")`),
-                        "Estado",
-                    ],
-                    [
-                        sequelize_1.Sequelize.literal(`(
-              SELECT "Regiones"."NameRegion"
-              FROM "Localizacion" inner join "Regiones" on "Localizacion"."FkRegion" = "Regiones"."id"
-              WHERE
-                   "Localizacion"."id" = "Proyectos"."FkLocalizacion")`),
-                        "Region",
-                    ],
-                    [
-                        sequelize_1.Sequelize.literal(`(
-              SELECT "Comunas"."NameComuna"
-              FROM "Localizacion" inner join "Comunas" on "Localizacion"."FkComuna" = "Comunas"."id"
-              WHERE
-                   "Localizacion"."id" = "Proyectos"."FkLocalizacion")`),
-                        "Comuna",
-                    ],
-                ],
+                exclude: tables_1.AttributesExcludesProyectPreview,
+                include: tables_1.AttributesIncludesProyectPreview,
             },
         });
         return res.json({
-            msg: "Proyectos cargados exitosamente",
+            status: "OK",
+            msg: msgResponse_1.ResponseCorrect.LoadProjectSuccefly,
             data: Proyects,
         });
     }
@@ -76,4 +51,22 @@ const getProjectPreview = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getProjectPreview = getProjectPreview;
+const getAllInfoProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const tokenVerify = validations_1.verifyBearerToken(req.headers.authorization);
+    if (!tokenVerify.validation) {
+        return res.status(401).json({
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.Unauthorized,
+        });
+    }
+    const { id } = req.params;
+    const proyectForId = yield Proyecto_1.default.findByPk(id, {
+        attributes: {
+            exclude: tables_1.AttributesExcludesFKProyect,
+            include: tables_1.AttributesIncludesOneProyect,
+        },
+    });
+    return res.json(proyectForId);
+});
+exports.getAllInfoProject = getAllInfoProject;
 //# sourceMappingURL=Proyectos.js.map

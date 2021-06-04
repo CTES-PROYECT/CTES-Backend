@@ -16,9 +16,11 @@ const express_1 = __importDefault(require("express"));
 const connect_1 = __importDefault(require("../database/connect"));
 const Usuarios_1 = __importDefault(require("../router/Usuarios"));
 const ProyectosRouter_1 = __importDefault(require("../router/ProyectosRouter"));
+const morgan_1 = __importDefault(require("morgan"));
 class Server {
     constructor() {
         this.app = express_1.default();
+        this.app.use(morgan_1.default("tiny"));
         this.port = process.env.PORT || "5001";
         this.middlewares();
         this.dataBaseConnection();

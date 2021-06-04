@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyUserById = exports.validatePermissions = exports.bcryptPassword = exports.comparePassword = exports.userLoginValidation = exports.existingUser = exports.validatorRequest = void 0;
+exports.verifyBearerToken = exports.verifyUserById = exports.validatePermissions = exports.bcryptPassword = exports.comparePassword = exports.userLoginValidation = exports.existingUser = exports.validatorRequest = void 0;
 const express_validator_1 = require("express-validator");
 const Users_1 = __importDefault(require("../../models/db/Users"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -21,15 +21,15 @@ const validatorRequest = (req) => {
     const error = express_validator_1.validationResult(req);
     if (!error.isEmpty()) {
         return {
-            status: 'Error en peticion',
-            error: error.array()
+            status: "Error en peticion",
+            error: error.array(),
         };
     }
 };
 exports.validatorRequest = validatorRequest;
 const existingUser = (email) => __awaiter(void 0, void 0, void 0, function* () {
     const usuario = yield Users_1.default.findOne({
-        where: { Email: email }
+        where: { Email: email },
     });
     if (usuario) {
         return true;
@@ -39,7 +39,7 @@ const existingUser = (email) => __awaiter(void 0, void 0, void 0, function* () {
 exports.existingUser = existingUser;
 const userLoginValidation = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
     const usuario = yield Users_1.default.findOne({
-        where: { Email: email }
+        where: { Email: email },
     });
     if (!usuario) {
         return false;
@@ -91,4 +91,36 @@ function verifyUserById(id) {
     });
 }
 exports.verifyUserById = verifyUserById;
+const stringBearer = "Bearer";
+function verifyBearerToken(autorization) {
+    if (!autorization) {
+        return {
+            validation: false,
+        };
+    }
+    const arrayAuth = autorization.split(" ");
+    if (arrayAuth.length > 2 || arrayAuth.length <= 1) {
+        return {
+            validation: false,
+        };
+    }
+    if (arrayAuth[0] === stringBearer) {
+        if (arrayAuth[1]) {
+            const id = jwt_1.verifyToken(arrayAuth[1]);
+            if (!id) {
+                return {
+                    validation: false,
+                };
+            }
+            return {
+                validation: true,
+                id: id,
+            };
+        }
+    }
+    return {
+        validation: false,
+    };
+}
+exports.verifyBearerToken = verifyBearerToken;
 //# sourceMappingURL=validations.js.map

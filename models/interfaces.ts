@@ -23,7 +23,7 @@ interface Localizacion {
 interface DateProyect {
   PlazoEjecucion?: string;
   FechaLicitacion?: string;
-  FechaInicioObra?: string;
+  FechaInicioObras?: string;
 }
 
 interface Contratista {
@@ -53,6 +53,11 @@ interface SolicitudProyecto {
   FkTipoSolicitud: number;
 }
 
+interface resultValidationToken {
+  validation: boolean;
+  id?: string;
+}
+
 export {
   Proyectos,
   Localizacion,
@@ -61,4 +66,5 @@ export {
   Caracteristicas,
   Socios,
   SolicitudProyecto,
+  resultValidationToken,
 };

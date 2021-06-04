@@ -1,12 +1,13 @@
 import { Router } from "express";
-import { getProjectPreview } from "../controller/Proyectos";
+import { getAllInfoProject, getProjectPreview } from "../controller/Proyectos";
 import { InsertProyect } from "../controller/utils/fuctions/CreateProyectos";
 
 const router = Router();
 
-// api/projets/
+// api/projects/
 
 router.get("/preview", getProjectPreview);
+router.get("/:id", getAllInfoProject);
 router.get("/", InsertProyect);
 
 export default router;

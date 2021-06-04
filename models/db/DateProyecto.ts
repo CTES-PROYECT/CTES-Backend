@@ -10,7 +10,7 @@ const ModelDateProyecto = db.define(
     FechaLicitacion: {
       type: DataTypes.DATE,
     },
-    FechaInicioObra: {
+    FechaInicioObras: {
       type: DataTypes.DATE,
     },
   },

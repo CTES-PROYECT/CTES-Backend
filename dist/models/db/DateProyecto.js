@@ -12,7 +12,7 @@ const ModelDateProyecto = connect_1.default.define("DateProyecto", {
     FechaLicitacion: {
         type: sequelize_1.DataTypes.DATE,
     },
-    FechaInicioObra: {
+    FechaInicioObras: {
         type: sequelize_1.DataTypes.DATE,
     },
 }, {
