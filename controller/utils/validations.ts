@@ -86,12 +86,13 @@ export async function verifyUserById(id: Identifier): Promise<Boolean | Model> {
     return false;
   }
 }
-const stringBearer = "Bearer";
+const stringBearer = "bearer";
 
 export function verifyBearerToken(
   autorization: string | undefined
 ): resultValidationToken {
   if (!autorization) {
+    console.log(1);
     return {
       validation: false,
     };
@@ -99,6 +100,7 @@ export function verifyBearerToken(
   const arrayAuth: string[] = autorization.split(" ");
 
   if (arrayAuth.length > 2 || arrayAuth.length <= 1) {
+    console.log(2);
     return {
       validation: false,
     };
@@ -108,6 +110,7 @@ export function verifyBearerToken(
     if (arrayAuth[1]) {
       const id = verifyToken(arrayAuth[1]);
       if (!id) {
+        console.log(3);
         return {
           validation: false,
         };
@@ -119,6 +122,7 @@ export function verifyBearerToken(
     }
   }
 
+  console.log(4);
   return {
     validation: false,
   };

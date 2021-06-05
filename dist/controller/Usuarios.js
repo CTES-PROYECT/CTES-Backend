@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateRolUser = exports.updateStateUsers = exports.registerUser = exports.logInUser = void 0;
+exports.confimedUser = exports.updateRolUser = exports.updateStateUsers = exports.registerUser = exports.logInUser = void 0;
 const Users_1 = __importDefault(require("../models/db/Users"));
 const validations_1 = require("./utils/validations");
 const jwt_1 = require("./utils/jwt");
@@ -44,6 +44,7 @@ const logInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             data: {
                 name: usuariosAtributte.FullName,
                 token: jwt_1.generateToken(usuariosAtributte.id),
+                rol: usuariosAtributte.RolUser,
             },
         });
     }
@@ -186,4 +187,22 @@ const updateRolUser = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.updateRolUser = updateRolUser;
+const confimedUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idUser } = req.body;
+    const user = yield Users_1.default.findByPk(idUser);
+    if (user) {
+        return res.json({
+            status: "OK",
+            data: {
+                fullName: user.get().FullName,
+                rol: user.get().RolUser,
+            },
+        });
+    }
+    return res.status(401).json({
+        status: "ERROR",
+        msg: msgResponse_1.ResponseError.Unauthorized,
+    });
+});
+exports.confimedUser = confimedUser;
 //# sourceMappingURL=Usuarios.js.map

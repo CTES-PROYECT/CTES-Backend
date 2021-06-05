@@ -45,6 +45,7 @@ export const logInUser = async (req: Request, res: Response) => {
       data: {
         name: usuariosAtributte.FullName,
         token: generateToken(usuariosAtributte.id),
+        rol: usuariosAtributte.RolUser,
       },
     });
   }
@@ -194,4 +195,23 @@ export const updateRolUser = async (req: Request, res: Response) => {
       msg: ResponseError.ErrorServidor,
     });
   }
+};
+
+export const confimedUser = async (req: Request, res: Response) => {
+  const { idUser } = req.body;
+
+  const user = await ModelUsers.findByPk(idUser);
+  if (user) {
+    return res.json({
+      status: "OK",
+      data: {
+        fullName: user.get().FullName,
+        rol: user.get().RolUser,
+      },
+    });
+  }
+  return res.status(401).json({
+    status: "ERROR",
+    msg: ResponseError.Unauthorized,
+  });
 };
