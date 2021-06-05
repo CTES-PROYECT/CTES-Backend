@@ -10,6 +10,7 @@
 
 # production
 /build
+./database/connect.ts
 
 # misc
 .DS_Store
@@ -24,4 +25,3 @@ yarn-error.log*
 
 # database
 
-/database/connect.ts

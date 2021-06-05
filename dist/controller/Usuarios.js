@@ -20,40 +20,42 @@ const msgResponse_1 = require("../constant/msgResponse");
 const tables_1 = require("../constant/tables");
 const logInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const validation = validations_1.validatorRequest(req);
+    console.log(req.body);
     if (validation) {
-        return res.status(400).json(validation);
+        return res.status(401).json(validation);
     }
     const { email, password } = req.body;
+    console.log(email + " " + password);
     const usuario = yield Users_1.default.findOne({
-        where: { Email: email }
+        where: { Email: email },
     });
     if (!usuario) {
         return res.status(401).json({
-            status: 'ERROR',
-            msg: 'Email invalido'
+            status: "ERROR",
+            msg: "Email invalido",
         });
     }
     const usuariosAtributte = usuario.get();
     const validationPassword = validations_1.comparePassword(password, usuariosAtributte.Password);
     if (validationPassword && usuariosAtributte.EstadoUser === true) {
         return res.json({
-            status: 'OK',
+            status: "OK",
             msg: msgResponse_1.ResponseCorrect.UserAuthCorrectly,
             data: {
                 name: usuariosAtributte.FullName,
-                token: jwt_1.generateToken(usuariosAtributte.id)
-            }
+                token: jwt_1.generateToken(usuariosAtributte.id),
+            },
         });
     }
     if (validationPassword && usuariosAtributte.EstadoUser === null) {
         return res.status(401).json({
-            status: 'ERROR',
-            msg: msgResponse_1.ResponseError.UserInCheck
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.UserInCheck,
         });
     }
     return res.status(401).json({
-        status: 'ERROR',
-        msg: msgResponse_1.ResponseError.PasswordIncorrectly
+        status: "ERROR",
+        msg: msgResponse_1.ResponseError.PasswordIncorrectly,
     });
 });
 exports.logInUser = logInUser;
@@ -67,8 +69,8 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     if (existing) {
         console.log(existing);
         return res.status(400).json({
-            status: 'ERROR',
-            msg: msgResponse_1.ResponseError.EmailExisting
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.EmailExisting,
         });
     }
     try {
@@ -76,18 +78,18 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         yield Users_1.default.create({
             FullName: fullName,
             Email: email,
-            Password: passwordCrypt
+            Password: passwordCrypt,
         });
         return res.json({
-            status: 'OK',
-            msg: msgResponse_1.ResponseCorrect.UserCreateCorrectly
+            status: "OK",
+            msg: msgResponse_1.ResponseCorrect.UserCreateCorrectly,
         });
     }
     catch (error) {
         console.log(error);
         return res.status(500).json({
-            status: 'ERROR',
-            msg: msgResponse_1.ResponseError.ErrorServidor
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.ErrorServidor,
         });
     }
 });
@@ -106,37 +108,37 @@ const updateStateUsers = (req, res) => __awaiter(void 0, void 0, void 0, functio
     const premissions = yield validations_1.validatePermissions(token, tables_1.Roles.validador);
     if (!premissions) {
         return res.status(401).json({
-            status: 'ERROR',
-            msg: msgResponse_1.ResponseError.UnauthorizedForUpdate
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.UnauthorizedForUpdate,
         });
     }
     const user = yield validations_1.verifyUserById(idUserPut);
     if (user === false) {
         return res.status(400).json({
-            status: 'ERROR',
-            msg: msgResponse_1.ResponseError.NotExistId
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.NotExistId,
         });
     }
     if (user.get().EstadoUser === condition) {
         return res.json({
-            status: 'OK',
-            msg: msgResponse_1.ResponseCorrect.NotChangeUser
+            status: "OK",
+            msg: msgResponse_1.ResponseCorrect.NotChangeUser,
         });
     }
     try {
         yield user.update({
-            EstadoUser: condition
+            EstadoUser: condition,
         });
         return res.json({
-            status: 'OK',
-            msg: msgResponse_1.ResponseCorrect.UpdateUser
+            status: "OK",
+            msg: msgResponse_1.ResponseCorrect.UpdateUser,
         });
     }
     catch (error) {
-        console.log('Error');
+        console.log("Error");
         return res.status(500).json({
-            status: 'ERROR',
-            msg: msgResponse_1.ResponseError.ErrorServidor
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.ErrorServidor,
         });
     }
 });
@@ -155,31 +157,31 @@ const updateRolUser = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const premissions = yield validations_1.validatePermissions(token, tables_1.Roles.admin);
     if (!premissions) {
         return res.status(401).json({
-            status: 'ERROR',
-            msg: msgResponse_1.ResponseError.UnauthorizedForUpdate
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.UnauthorizedForUpdate,
         });
     }
     const user = yield validations_1.verifyUserById(idUserPut);
     if (user === false) {
         return res.status(400).json({
-            status: 'ERROR',
-            msg: msgResponse_1.ResponseError.NotExistId
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.NotExistId,
         });
     }
     try {
         yield user.update({
-            RolUser: rol
+            RolUser: rol,
         });
         return res.json({
-            status: 'OK',
-            msg: msgResponse_1.ResponseCorrect.UpdateUser
+            status: "OK",
+            msg: msgResponse_1.ResponseCorrect.UpdateUser,
         });
     }
     catch (error) {
         console.log(error);
         return res.status(500).json({
-            status: 'ERROR',
-            msg: msgResponse_1.ResponseError.ErrorServidor
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.ErrorServidor,
         });
     }
 });
