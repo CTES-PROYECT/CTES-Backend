@@ -134,4 +134,47 @@ export const AttributesIncludesOneProyect: (string | ProjectionAlias)[] = [
             SELECT "m"."NameClasificacion" FROM "Clasificacion" AS m WHERE m.id = "Proyectos"."FkClasificacion")`),
     "Clasificacion",
   ],
+
+  [
+    Sequelize.literal(`(
+            SELECT "m"."Longitud" FROM "Caracteristicas" AS m WHERE m.id = "Proyectos"."FkCaracteristicas")`),
+    "Longitud",
+  ],
+
+  [
+    Sequelize.literal(`(
+            SELECT "m"."Seccion" FROM "Caracteristicas" AS m WHERE m.id = "Proyectos"."FkCaracteristicas")`),
+    "Seccion",
+  ],
+
+  [
+    Sequelize.literal(`(
+            SELECT "m"."Pendiente" FROM "Caracteristicas" AS m WHERE m.id = "Proyectos"."FkCaracteristicas")`),
+    "Pendiente",
+  ],
+  [
+    Sequelize.literal(`(
+            SELECT "m"."FullName" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
+    "NameContratista",
+  ],
+  [
+    Sequelize.literal(`(
+            SELECT "m"."Email" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
+    "EmailContratista",
+  ],
+  [
+    Sequelize.literal(`(
+            SELECT "m"."NumeroTelefono" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
+    "NumeroTelefonoContratista",
+  ],
+  [
+    Sequelize.literal(`(
+            SELECT "m"."Direccion" FROM "OfIngenieria" AS m WHERE m.id = "Proyectos"."FkOfIngenieria")`),
+    "DireccionOfIngenieria",
+  ],
+  [
+    Sequelize.literal(`(
+            SELECT "com"."NameComuna" FROM "OfIngenieria" AS ofcina inner join "Comunas" as com on ofcina."FkComuna"=com."id" WHERE ofcina.id = "Proyectos"."FkOfIngenieria")`),
+    "ComunaOfIngenieria",
+  ],
 ];

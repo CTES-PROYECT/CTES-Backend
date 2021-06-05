@@ -130,5 +130,45 @@ exports.AttributesIncludesOneProyect = [
             SELECT "m"."NameClasificacion" FROM "Clasificacion" AS m WHERE m.id = "Proyectos"."FkClasificacion")`),
         "Clasificacion",
     ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."Longitud" FROM "Caracteristicas" AS m WHERE m.id = "Proyectos"."FkCaracteristicas")`),
+        "Longitud",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."Seccion" FROM "Caracteristicas" AS m WHERE m.id = "Proyectos"."FkCaracteristicas")`),
+        "Seccion",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."Pendiente" FROM "Caracteristicas" AS m WHERE m.id = "Proyectos"."FkCaracteristicas")`),
+        "Pendiente",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."FullName" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
+        "NameContratista",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."Email" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
+        "EmailContratista",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."NumeroTelefono" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
+        "NumeroTelefonoContratista",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."Direccion" FROM "OfIngenieria" AS m WHERE m.id = "Proyectos"."FkOfIngenieria")`),
+        "DireccionOfIngenieria",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "com"."NameComuna" FROM "OfIngenieria" AS ofcina inner join "Comunas" as com on ofcina."FkComuna"=com."id" WHERE ofcina.id = "Proyectos"."FkOfIngenieria")`),
+        "ComunaOfIngenieria",
+    ],
 ];
 //# sourceMappingURL=tables.js.map

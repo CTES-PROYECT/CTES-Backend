@@ -17,6 +17,7 @@ const connect_1 = __importDefault(require("../database/connect"));
 const Usuarios_1 = __importDefault(require("../router/Usuarios"));
 const ProyectosRouter_1 = __importDefault(require("../router/ProyectosRouter"));
 const morgan_1 = __importDefault(require("morgan"));
+const cors_1 = __importDefault(require("cors"));
 class Server {
     constructor() {
         this.app = express_1.default();
@@ -47,6 +48,7 @@ class Server {
         this.app.use("/api/projects", ProyectosRouter_1.default);
     }
     middlewares() {
+        this.app.use(cors_1.default());
         this.app.use(express_1.default.json());
     }
 }

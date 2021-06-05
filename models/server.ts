@@ -3,6 +3,7 @@ import db from "../database/connect";
 import routerUser from "../router/Usuarios";
 import routerProyect from "../router/ProyectosRouter";
 import morgan from "morgan";
+import cors from "cors";
 
 class Server {
   private app: Application;
@@ -37,6 +38,7 @@ class Server {
     this.app.use("/api/projects", routerProyect);
   }
   middlewares() {
+    this.app.use(cors());
     this.app.use(express.json());
   }
 }

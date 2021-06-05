@@ -7,6 +7,7 @@ exports.ResponseCorrect = {
     UserCreateCorrectly: "Usuario creado correctamente",
     UserAuthCorrectly: "Usuario autenticado con exito",
     LoadProjectSuccefly: "Proyectos cargados exitosamente",
+    LoadInfoProject: "Informacion cargada exitosamente",
 };
 exports.ResponseError = {
     Unauthorized: "Usuario con token invalido",

@@ -16,16 +16,8 @@ exports.getAllInfoProject = exports.getProjectPreview = void 0;
 const msgResponse_1 = require("../constant/msgResponse");
 const tables_1 = require("../constant/tables");
 const Proyecto_1 = __importDefault(require("../models/db/Proyecto"));
-const validations_1 = require("./utils/validations");
 const getProjectPreview = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const tokenVerify = validations_1.verifyBearerToken(req.headers.authorization);
-        if (!tokenVerify.validation) {
-            return res.status(401).json({
-                status: "ERROR",
-                msg: msgResponse_1.ResponseError.Unauthorized,
-            });
-        }
         const size = req.query.size ? req.query["size"] : 4; // Make sure to parse the limit to number
         const skip = req.query.skip ? req.query["skip"] : 0;
         const Proyects = yield Proyecto_1.default.findAll({
@@ -52,13 +44,6 @@ const getProjectPreview = (req, res) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.getProjectPreview = getProjectPreview;
 const getAllInfoProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const tokenVerify = validations_1.verifyBearerToken(req.headers.authorization);
-    if (!tokenVerify.validation) {
-        return res.status(401).json({
-            status: "ERROR",
-            msg: msgResponse_1.ResponseError.Unauthorized,
-        });
-    }
     const { id } = req.params;
     const proyectForId = yield Proyecto_1.default.findByPk(id, {
         attributes: {
@@ -66,7 +51,11 @@ const getAllInfoProject = (req, res) => __awaiter(void 0, void 0, void 0, functi
             include: tables_1.AttributesIncludesOneProyect,
         },
     });
-    return res.json(proyectForId);
+    return res.json({
+        status: "OK",
+        msg: msgResponse_1.ResponseCorrect.LoadInfoProject,
+        data: proyectForId,
+    });
 });
 exports.getAllInfoProject = getAllInfoProject;
 //# sourceMappingURL=Proyectos.js.map
