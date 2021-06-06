@@ -21,7 +21,6 @@ export const logInUser = async (req: Request, res: Response) => {
   }
 
   const { email, password } = req.body;
-  console.log(email + " " + password);
   const usuario = await ModelUsers.findOne({
     where: { Email: email },
   });

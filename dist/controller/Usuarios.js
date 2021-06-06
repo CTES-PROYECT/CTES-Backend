@@ -24,7 +24,6 @@ const logInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return res.status(401).json(validation);
     }
     const { email, password } = req.body;
-    console.log(email + " " + password);
     const usuario = yield Users_1.default.findOne({
         where: { Email: email },
     });

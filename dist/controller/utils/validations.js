@@ -91,17 +91,15 @@ function verifyUserById(id) {
     });
 }
 exports.verifyUserById = verifyUserById;
-const stringBearer = "bearer";
+const stringBearer = "Bearer";
 function verifyBearerToken(autorization) {
     if (!autorization) {
-        console.log(1);
         return {
             validation: false,
         };
     }
     const arrayAuth = autorization.split(" ");
     if (arrayAuth.length > 2 || arrayAuth.length <= 1) {
-        console.log(2);
         return {
             validation: false,
         };
@@ -110,7 +108,6 @@ function verifyBearerToken(autorization) {
         if (arrayAuth[1]) {
             const id = jwt_1.verifyToken(arrayAuth[1]);
             if (!id) {
-                console.log(3);
                 return {
                     validation: false,
                 };
@@ -121,7 +118,6 @@ function verifyBearerToken(autorization) {
             };
         }
     }
-    console.log(4);
     return {
         validation: false,
     };
