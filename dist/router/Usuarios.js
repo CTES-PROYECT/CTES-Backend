@@ -8,7 +8,6 @@ const msgResponse_1 = require("../constant/msgResponse");
 const router = express_1.Router();
 const middlewareToken = (req, res, next) => {
     const tokenVerify = validations_1.verifyBearerToken(req.headers.authorization);
-    console.log(req.headers.authorization);
     if (!tokenVerify.validation) {
         return res.status(401).json({
             status: "ERROR",

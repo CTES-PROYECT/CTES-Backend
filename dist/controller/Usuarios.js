@@ -20,7 +20,6 @@ const msgResponse_1 = require("../constant/msgResponse");
 const tables_1 = require("../constant/tables");
 const logInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const validation = validations_1.validatorRequest(req);
-    console.log(req.body);
     if (validation) {
         return res.status(401).json(validation);
     }

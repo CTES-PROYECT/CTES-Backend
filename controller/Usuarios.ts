@@ -15,7 +15,7 @@ import { Roles } from "../constant/tables";
 
 export const logInUser = async (req: Request, res: Response) => {
   const validation = validatorRequest(req);
-  console.log(req.body);
+
   if (validation) {
     return res.status(401).json(validation);
   }

@@ -16,7 +16,6 @@ const middlewareToken = (req: Request, res: Response, next: NextFunction) => {
   const tokenVerify: resultValidationToken = verifyBearerToken(
     req.headers.authorization
   );
-  console.log(req.headers.authorization);
   if (!tokenVerify.validation) {
     return res.status(401).json({
       status: "ERROR",
