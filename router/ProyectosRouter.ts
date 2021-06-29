@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { ResponseError } from "../constant/msgResponse";
-import { getAllInfoProject, getProjectPreview } from "../controller/Proyectos";
+import {getAllInfoProject, getCantidadPrject, getProjectPreview} from "../controller/Proyectos";
 import { InsertProyect } from "../controller/utils/fuctions/CreateProyectos";
 import { verifyBearerToken } from "../controller/utils/validations";
 import { resultValidationToken } from "../models/interfaces";
@@ -25,7 +25,7 @@ const middlewareToken = (req: Request, res: Response, next: NextFunction) => {
 };
 
 // api/projects/
-
+router.get("/cantidad",middlewareToken,getCantidadPrject)
 router.get("/", middlewareToken, getProjectPreview);
 router.get("/:id", middlewareToken, getAllInfoProject);
 router.get("/", InsertProyect);

@@ -38,6 +38,22 @@ export const getProjectPreview = async (req: Request, res: Response) => {
   }
 };
 
+export const getCantidadPrject = async (req: Request, res: Response) => {
+  try{
+    const CantProject=await ModelProyecto.findAll();
+    res.json({
+      status:"OK",
+      msg:ResponseCorrect.LoadInfoProject,
+      data:CantProject.length
+    });
+  }catch (e) {
+    return res.status(500).json({
+      status: "ERROR",
+      msg: ResponseError.ErrorServidor,
+    });
+  }
+}
+
 export const getAllInfoProject = async (req: Request, res: Response) => {
   const { id } = req.params;
 

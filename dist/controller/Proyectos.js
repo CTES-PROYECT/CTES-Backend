@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllInfoProject = exports.getProjectPreview = void 0;
+exports.getAllInfoProject = exports.getCantidadPrject = exports.getProjectPreview = void 0;
 const msgResponse_1 = require("../constant/msgResponse");
 const tables_1 = require("../constant/tables");
 const Proyecto_1 = __importDefault(require("../models/db/Proyecto"));
@@ -43,6 +43,23 @@ const getProjectPreview = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getProjectPreview = getProjectPreview;
+const getCantidadPrject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const CantProject = yield Proyecto_1.default.findAll();
+        res.json({
+            status: "OK",
+            msg: msgResponse_1.ResponseCorrect.LoadInfoProject,
+            data: CantProject.length
+        });
+    }
+    catch (e) {
+        return res.status(500).json({
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.ErrorServidor,
+        });
+    }
+});
+exports.getCantidadPrject = getCantidadPrject;
 const getAllInfoProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const proyectForId = yield Proyecto_1.default.findByPk(id, {

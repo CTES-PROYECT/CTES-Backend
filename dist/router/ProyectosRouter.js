@@ -18,6 +18,7 @@ const middlewareToken = (req, res, next) => {
     return next();
 };
 // api/projects/
+router.get("/cantidad", middlewareToken, Proyectos_1.getCantidadPrject);
 router.get("/", middlewareToken, Proyectos_1.getProjectPreview);
 router.get("/:id", middlewareToken, Proyectos_1.getAllInfoProject);
 router.get("/", CreateProyectos_1.InsertProyect);
