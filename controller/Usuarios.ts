@@ -62,6 +62,7 @@ export const logInUser = async (req: Request, res: Response) => {
 
 export const registerUser = async (req: Request, res: Response) => {
   const validation = validatorRequest(req);
+  console.log(req.body);
   if (validation) {
     return res.status(400).json(validation);
   }

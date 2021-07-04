@@ -60,6 +60,7 @@ const logInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.logInUser = logInUser;
 const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const validation = validations_1.validatorRequest(req);
+    console.log(req.body);
     if (validation) {
         return res.status(400).json(validation);
     }
