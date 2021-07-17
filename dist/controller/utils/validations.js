@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyBearerToken = exports.verifyUserById = exports.validatePermissions = exports.bcryptPassword = exports.comparePassword = exports.userLoginValidation = exports.existingUser = exports.validatorRequest = void 0;
+exports.verifyBearerToken = exports.verifyUserById = exports.validatePermissionsForId = exports.validatePermissionsForToken = exports.bcryptPassword = exports.comparePassword = exports.userLoginValidation = exports.existingUser = exports.validatorRequest = void 0;
 const express_validator_1 = require("express-validator");
 const Users_1 = __importDefault(require("../../models/db/Users"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -61,7 +61,7 @@ function bcryptPassword(password) {
     return bcrypt_1.default.hash(password, salt);
 }
 exports.bcryptPassword = bcryptPassword;
-function validatePermissions(token, fk) {
+function validatePermissionsForToken(token, fk) {
     return __awaiter(this, void 0, void 0, function* () {
         const id = jwt_1.decodeIdToken(token);
         if (id === false) {
@@ -74,7 +74,17 @@ function validatePermissions(token, fk) {
         return false;
     });
 }
-exports.validatePermissions = validatePermissions;
+exports.validatePermissionsForToken = validatePermissionsForToken;
+function validatePermissionsForId(id, fk) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const usuario = yield Users_1.default.findByPk(id);
+        if ((usuario === null || usuario === void 0 ? void 0 : usuario.get().RolUser) === fk) {
+            return true;
+        }
+        return false;
+    });
+}
+exports.validatePermissionsForId = validatePermissionsForId;
 function verifyUserById(id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -85,7 +95,6 @@ function verifyUserById(id) {
             return user;
         }
         catch (error) {
-            console.log(error);
             return false;
         }
     });

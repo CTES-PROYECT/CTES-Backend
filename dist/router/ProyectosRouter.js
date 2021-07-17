@@ -22,5 +22,7 @@ router.get("/cantidad", middlewareToken, Proyectos_1.getCantidadPrject);
 router.get("/", middlewareToken, Proyectos_1.getProjectPreview);
 router.get("/:id", middlewareToken, Proyectos_1.getAllInfoProject);
 router.get("/", CreateProyectos_1.InsertProyect);
+router.get("/cantidad/estado", middlewareToken, Proyectos_1.getCantProyectForState);
+router.get("/cantidad/region", middlewareToken, Proyectos_1.getCantProyectForRegion);
 exports.default = router;
 //# sourceMappingURL=ProyectosRouter.js.map

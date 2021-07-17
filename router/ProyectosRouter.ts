@@ -1,6 +1,12 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { ResponseError } from "../constant/msgResponse";
-import {getAllInfoProject, getCantidadPrject, getProjectPreview} from "../controller/Proyectos";
+import {
+  getAllInfoProject,
+  getCantidadPrject,
+  getCantProyectForRegion,
+  getCantProyectForState,
+  getProjectPreview
+} from "../controller/Proyectos";
 import { InsertProyect } from "../controller/utils/fuctions/CreateProyectos";
 import { verifyBearerToken } from "../controller/utils/validations";
 import { resultValidationToken } from "../models/interfaces";
@@ -29,5 +35,7 @@ router.get("/cantidad",middlewareToken,getCantidadPrject)
 router.get("/", middlewareToken, getProjectPreview);
 router.get("/:id", middlewareToken, getAllInfoProject);
 router.get("/", InsertProyect);
+router.get("/cantidad/estado",middlewareToken,getCantProyectForState);
+router.get("/cantidad/region",middlewareToken,getCantProyectForRegion);
 
 export default router;

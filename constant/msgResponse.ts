@@ -10,6 +10,7 @@ export const ResponseCorrect = {
 export const ResponseError = {
   Unauthorized: "Usuario con token invalido",
   UnauthorizedForUpdate: "Usuario no permitido para modificación",
+  UnauthorizedForRequest: "Usuario no permitido para solicitud",
   NotExistId: "id del usuario que se desea actualizar es invalido",
   ErrorServidor: "Error en el servidor, intente mas tarde",
   EmailExisting: "Email se ecnuentra registrado anteriormente",

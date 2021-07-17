@@ -19,6 +19,7 @@ const middlewareToken = (req, res, next) => {
 };
 // /api/users
 router.get("/", middlewareToken, Usuarios_1.confimedUser);
+router.get("/pendings", middlewareToken, Usuarios_1.usersPendings);
 router.post("/login", [express_validator_1.body("email").isEmail(), express_validator_1.body("password").notEmpty()], Usuarios_1.logInUser);
 router.post("/register", [
     express_validator_1.body("email").isEmail(),
@@ -26,7 +27,7 @@ router.post("/register", [
     express_validator_1.body("fullName").isString(),
 ], Usuarios_1.registerUser);
 router.put("/update/state", [
-    express_validator_1.body("token").isString(),
+    middlewareToken,
     express_validator_1.body("idUserPut").notEmpty(),
     express_validator_1.body("condition").isBoolean(),
 ], Usuarios_1.updateStateUsers);
