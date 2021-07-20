@@ -84,10 +84,12 @@ const ModelProyecto = db.define(
       },
     },
   },
+  
   {
     timestamps: false,
     freezeTableName: true,
   }
 );
+
 
 export default ModelProyecto;

@@ -6,6 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const connect_1 = __importDefault(require("../../database/connect"));
 const ModelRegiones = connect_1.default.define("Regiones", {
+    id: {
+        type: sequelize_1.DataTypes.INTEGER,
+        primaryKey: true
+    },
     NameRegion: {
         type: sequelize_1.DataTypes.STRING,
     },

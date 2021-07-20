@@ -12,21 +12,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllInfoProject = exports.getCantidadPrject = exports.getCantProyectForRegion = exports.getCantProyectForState = exports.getProjectPreview = void 0;
+exports.getComunasForRegion = exports.getMandantes = exports.getRegionesComunas = exports.getCantTotalLongitud = exports.getAllInfoProject = exports.getCantidadPrject = exports.getCantProyectForRegion = exports.getCantProyectForType = exports.getCantProyectForState = exports.getProjectPreview = void 0;
 const msgResponse_1 = require("../constant/msgResponse");
 const tables_1 = require("../constant/tables");
 const Proyecto_1 = __importDefault(require("../models/db/Proyecto"));
 const sequelize_1 = require("sequelize");
 const EstadoProyecto_1 = __importDefault(require("../models/db/EstadoProyecto"));
+const Regiones_1 = __importDefault(require("../models/db/Regiones"));
 const Localizacion_1 = __importDefault(require("../models/db/Localizacion"));
+const Clasificacion_1 = __importDefault(require("../models/db/Clasificacion"));
+const Comuna_1 = __importDefault(require("../models/db/Comuna"));
+const Contratista_1 = __importDefault(require("../models/db/Contratista"));
+const FunctionsHelper_1 = require("./utils/fuctions/FunctionsHelper");
 const getProjectPreview = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const size = req.query.size ? req.query["size"] : 4; // Make sure to parse the limit to number
         const skip = req.query.skip ? req.query["skip"] : 0;
         const { params } = req.body;
         if (params) {
-            console.log(params);
-            return;
+            const ProyectsFilter = yield Proyecto_1.default.findAll({
+                limit: parseInt(size),
+                offset: parseInt(skip),
+                attributes: {
+                    exclude: tables_1.AttributesExcludesProyectPreview,
+                    include: tables_1.AttributesIncludesProyectPreview,
+                },
+                where: FunctionsHelper_1.getWhereProjectFilter(params)
+            });
+            return res.json({
+                status: "OK",
+                msg: msgResponse_1.ResponseCorrect.LoadProjectSuccefly,
+                data: ProyectsFilter,
+            });
+            ;
         }
         const Proyects = yield Proyecto_1.default.findAll({
             limit: parseInt(size),
@@ -74,6 +92,29 @@ const getCantProyectForState = (req, res) => __awaiter(void 0, void 0, void 0, f
     });
 });
 exports.getCantProyectForState = getCantProyectForState;
+const getCantProyectForType = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const resp = yield Clasificacion_1.default.findAll({
+        attributes: {
+            include: [
+                [sequelize_1.Sequelize.literal(`(
+            SELECT COUNT(*) FROM "Proyectos" AS p WHERE p."FkClasificacion" = "Clasificacion"."id")`),
+                    "cantidad",]
+            ],
+        }
+    });
+    if (resp) {
+        return res.json({
+            status: '"OK',
+            msg: msgResponse_1.ResponseCorrect.LoadInfoProject,
+            data: resp.filter((p) => parseInt(p.get().cantidad) > 0)
+        });
+    }
+    return res.status(500).json({
+        status: "ERROR",
+        msg: msgResponse_1.ResponseError.ErrorServidor,
+    });
+});
+exports.getCantProyectForType = getCantProyectForType;
 const getCantProyectForRegion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const total = yield Proyecto_1.default.count();
     const resp = yield Localizacion_1.default.findAll({
@@ -136,4 +177,102 @@ const getAllInfoProject = (req, res) => __awaiter(void 0, void 0, void 0, functi
     });
 });
 exports.getAllInfoProject = getAllInfoProject;
+const getCantTotalLongitud = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const CantProject = yield Proyecto_1.default.findAll({
+        where: {
+            FkEstadoProyecto: {
+                [sequelize_1.Op.eq]: tables_1.EstadoProyectosConstantes.OPERACIONMANTENIMIENTO
+            }
+        },
+        attributes: {
+            exclude: tables_1.AttributesExcludesFKProyect,
+            include: [
+                [
+                    sequelize_1.Sequelize.literal(`(
+                            SELECT "m"."Longitud" FROM "Caracteristicas" AS m WHERE m.id = "Proyectos"."FkCaracteristicas")`),
+                    "Longitud",
+                ],
+            ]
+        },
+    });
+    let longitudTotal = 0;
+    CantProject.forEach((p) => {
+        if (p.Longitud !== null) {
+            longitudTotal = longitudTotal + parseInt(p.get().Longitud);
+        }
+    });
+    console.log(longitudTotal);
+    return res.json({
+        status: "OK",
+        msg: msgResponse_1.ResponseCorrect.LoadInfoProject,
+        data: longitudTotal / 1000,
+    });
+});
+exports.getCantTotalLongitud = getCantTotalLongitud;
+const getRegionesComunas = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const Regiones = yield Regiones_1.default.findAll({
+            raw: true
+        });
+        return res.json({
+            status: "OK",
+            msg: msgResponse_1.ResponseCorrect.LoadInfoProject,
+            data: Regiones
+        });
+    }
+    catch (error) {
+        console.log("error");
+        return res.status(500).json({
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.ErrorServidor,
+        });
+    }
+});
+exports.getRegionesComunas = getRegionesComunas;
+const getMandantes = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const Mandantes = yield Contratista_1.default.findAll({
+            raw: true
+        });
+        return res.json({
+            status: "OK",
+            msg: msgResponse_1.ResponseCorrect.LoadInfoProject,
+            data: Mandantes
+        });
+    }
+    catch (error) {
+        console.log("error");
+        return res.status(500).json({
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.ErrorServidor,
+        });
+    }
+});
+exports.getMandantes = getMandantes;
+const getComunasForRegion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { idRegion } = req.params;
+        const Comunas = yield Comuna_1.default.findAll({
+            raw: true,
+            where: {
+                FkRegion: {
+                    [sequelize_1.Op.eq]: idRegion
+                }
+            }
+        });
+        return res.json({
+            status: "OK",
+            msg: msgResponse_1.ResponseCorrect.LoadInfoProject,
+            data: Comunas
+        });
+    }
+    catch (error) {
+        console.log("error");
+        return res.status(500).json({
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.ErrorServidor,
+        });
+    }
+});
+exports.getComunasForRegion = getComunasForRegion;
 //# sourceMappingURL=Proyectos.js.map

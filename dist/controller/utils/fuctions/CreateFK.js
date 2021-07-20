@@ -12,8 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchRegionFK = exports.createSolicitudProyecto = exports.createSocio = exports.createProyecto = exports.createOfIngenieria = exports.createMetodoConstructivo = exports.createLocalizacion = exports.createDateProyectFK = exports.createContratista = exports.createContratistaFK = exports.createCaracteristicasFK = void 0;
+exports.searchEstadoFK = exports.searchClasificacionFK = exports.searchRegionFK = exports.createSolicitudProyecto = exports.createSocio = exports.createProyecto = exports.createOfIngenieria = exports.createMetodoConstructivo = exports.createLocalizacion = exports.createDateProyectFK = exports.createContratista = exports.createContratistaFK = exports.createCaracteristicasFK = void 0;
 const sequelize_1 = require("sequelize");
+const tables_1 = require("../../../constant/tables");
 const Caracteristicas_1 = __importDefault(require("../../../models/db/Caracteristicas"));
 const Contratista_1 = __importDefault(require("../../../models/db/Contratista"));
 const DateProyecto_1 = __importDefault(require("../../../models/db/DateProyecto"));
@@ -55,6 +56,7 @@ const createContratista = (contratista) => new Promise((resolve) => __awaiter(vo
             FullName: { [sequelize_1.Op.eq]: contratista.FullName },
         },
     });
+    console.log(exist);
     if (exist == null) {
         const contra = yield Contratista_1.default.create(contratista);
         resolve(contra.get().id);
@@ -153,4 +155,28 @@ function searchRegionFK(region) {
     });
 }
 exports.searchRegionFK = searchRegionFK;
+function searchClasificacionFK(tipo) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let id;
+        tables_1.AllClasificacionesArray.forEach((c) => {
+            if (c.name === tipo) {
+                id = c.id;
+            }
+        });
+        return id;
+    });
+}
+exports.searchClasificacionFK = searchClasificacionFK;
+function searchEstadoFK(tipo) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let id;
+        tables_1.EstadoProyectosConstantesArray.forEach((c) => {
+            if (c.name === tipo) {
+                id = c.id;
+            }
+        });
+        return id;
+    });
+}
+exports.searchEstadoFK = searchEstadoFK;
 //# sourceMappingURL=CreateFK.js.map

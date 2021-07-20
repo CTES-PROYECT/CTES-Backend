@@ -1,4 +1,5 @@
 import { Op } from "sequelize";
+import { AllClasificacionesArray, EstadoProyectosConstantesArray } from "../../../constant/tables";
 import ModelCaracteristicas from "../../../models/db/Caracteristicas";
 import ModelContratista from "../../../models/db/Contratista";
 import ModelDateProyecto from "../../../models/db/DateProyecto";
@@ -55,6 +56,7 @@ export const createContratista = (contratista: Contratista) =>
         FullName: { [Op.eq]: contratista.FullName },
       },
     });
+    console.log(exist);
     if (exist == null) {
       const contra = await ModelContratista.create(contratista);
       resolve(contra.get().id);
@@ -154,4 +156,24 @@ export async function searchRegionFK(region: string) {
     },
   });
   return reg?.get().id;
+}
+
+export async function searchClasificacionFK(tipo: string) {
+  let id;
+  AllClasificacionesArray.forEach((c)=>{
+    if(c.name===tipo){
+      id=c.id
+    }
+  })
+  return id;
+}
+
+export async function searchEstadoFK(tipo: string) {
+  let id;
+  EstadoProyectosConstantesArray.forEach((c)=>{
+    if(c.name===tipo){
+      id=c.id
+    }
+  })
+  return id;
 }

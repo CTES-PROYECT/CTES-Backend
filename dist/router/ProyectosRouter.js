@@ -19,10 +19,17 @@ const middlewareToken = (req, res, next) => {
 };
 // api/projects/
 router.get("/cantidad", middlewareToken, Proyectos_1.getCantidadPrject);
-router.get("/", middlewareToken, Proyectos_1.getProjectPreview);
-router.get("/:id", middlewareToken, Proyectos_1.getAllInfoProject);
-router.get("/", CreateProyectos_1.InsertProyect);
+router.get("/longitud/cantidad", Proyectos_1.getCantTotalLongitud);
+router.post("/", middlewareToken, Proyectos_1.getProjectPreview);
+router.get("/info/:id", middlewareToken, Proyectos_1.getAllInfoProject);
 router.get("/cantidad/estado", middlewareToken, Proyectos_1.getCantProyectForState);
 router.get("/cantidad/region", middlewareToken, Proyectos_1.getCantProyectForRegion);
+router.get("/add/projectJson", CreateProyectos_1.InsertProyect);
+router.get("/cantidad/clasificacion", middlewareToken, Proyectos_1.getCantProyectForType);
+router.get("/regiones", middlewareToken, Proyectos_1.getRegionesComunas);
+router.get("/:idRegion/comunas", middlewareToken, Proyectos_1.getComunasForRegion);
+router.get("/mandantes", middlewareToken, Proyectos_1.getMandantes);
+//TODO: eliminar comentario para agregar proyectos desde json
+//router.get("/insert/toJso",InsertProyect)
 exports.default = router;
 //# sourceMappingURL=ProyectosRouter.js.map

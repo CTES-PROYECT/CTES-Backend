@@ -19,15 +19,56 @@ export const EstadoProyectosConstantes = {
   INGENIERIA: 3,
   LICITACION: 4,
   CONSTRUCCION: 5,
-  OPERACION: 6,
-  MANTENIMIENTO: 7,
+  OPERACIONMANTENIMIENTO: 6,
 };
+
+
+export const EstadoProyectosConstantesArray = [
+  {name:"En evaluación",id: 1},
+  {name:"SEIA",id: 1},
+  {name:"PREINVERSION",id: 2},
+  {name:"Ingeniería",id: 3},
+  {name:"Licitación",id: 4},
+  {name:"Construcción",id: 5},
+  {name:"Operación y Mantenimiento",id: 6},
+  {name:"EIADIA",id: 1}
+];
+
 export const ClasificacionConstantes = {
   MINERO: 1,
   HIDRAULICO: 2,
   CIVIL: 3,
   ESPACIOSSUBTERRANEOS: 4,
 };
+
+export const AllClasificacionesArray =[
+  {
+    name:"Cívil",
+    id:3
+  },
+  {
+    name:"Civil",
+    id:3
+  },
+  {
+    name:"Espacios Subterráneos",
+    id:4
+  },{
+    name:"Espacios Subterraneos",
+    id:4
+  },
+  {
+    name:"Minero",
+    id:1
+  }, {
+    name:"Hidráulico",
+    id:2
+  },
+  {
+    name:"Hidraulico",
+    id:2
+  }
+]
 
 export const AttributesExcludesProyectPreview: string[] = [
   "TipoContrato",

@@ -4,6 +4,10 @@ import db from "../../database/connect";
 const ModelRegiones = db.define(
   "Regiones",
   {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true
+    },
     NameRegion: {
       type: DataTypes.STRING,
     },

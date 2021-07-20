@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AttributesIncludesOneProyect = exports.AttributesIncludesProyectPreview = exports.AttributesExcludesFKProyect = exports.AttributesExcludesProyectPreview = exports.ClasificacionConstantes = exports.EstadoProyectosConstantes = exports.TipoSolicitudesConstantes = exports.Roles = void 0;
+exports.AttributesIncludesOneProyect = exports.AttributesIncludesProyectPreview = exports.AttributesExcludesFKProyect = exports.AttributesExcludesProyectPreview = exports.AllClasificacionesArray = exports.ClasificacionConstantes = exports.EstadoProyectosConstantesArray = exports.EstadoProyectosConstantes = exports.TipoSolicitudesConstantes = exports.Roles = void 0;
 const sequelize_1 = require("sequelize");
 exports.Roles = {
     validador: 2,
@@ -19,15 +19,52 @@ exports.EstadoProyectosConstantes = {
     INGENIERIA: 3,
     LICITACION: 4,
     CONSTRUCCION: 5,
-    OPERACION: 6,
-    MANTENIMIENTO: 7,
+    OPERACIONMANTENIMIENTO: 6,
 };
+exports.EstadoProyectosConstantesArray = [
+    { name: "En evaluación", id: 1 },
+    { name: "SEIA", id: 1 },
+    { name: "PREINVERSION", id: 2 },
+    { name: "Ingeniería", id: 3 },
+    { name: "Licitación", id: 4 },
+    { name: "Construcción", id: 5 },
+    { name: "Operación y Mantenimiento", id: 6 },
+    { name: "EIADIA", id: 1 }
+];
 exports.ClasificacionConstantes = {
     MINERO: 1,
     HIDRAULICO: 2,
     CIVIL: 3,
     ESPACIOSSUBTERRANEOS: 4,
 };
+exports.AllClasificacionesArray = [
+    {
+        name: "Cívil",
+        id: 3
+    },
+    {
+        name: "Civil",
+        id: 3
+    },
+    {
+        name: "Espacios Subterráneos",
+        id: 4
+    }, {
+        name: "Espacios Subterraneos",
+        id: 4
+    },
+    {
+        name: "Minero",
+        id: 1
+    }, {
+        name: "Hidráulico",
+        id: 2
+    },
+    {
+        name: "Hidraulico",
+        id: 2
+    }
+];
 exports.AttributesExcludesProyectPreview = [
     "TipoContrato",
     "TipoProyecto",
