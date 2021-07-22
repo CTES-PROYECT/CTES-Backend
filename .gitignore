@@ -25,3 +25,9 @@ yarn-error.log*
 
 # database
 
+
+database/connect.ts
+
+dist/database/connect.js
+
+dist/database/connect.js.map

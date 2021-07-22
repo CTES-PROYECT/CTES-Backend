@@ -25,11 +25,7 @@ export const getProjectPreview = async (req: Request, res: Response) => {
         const { params } = req.body;
 
         if (params) {
-            
-
             const ProyectsFilter = await ModelProyecto.findAll({
-                limit: parseInt(size),
-                offset: parseInt(skip),
                 attributes: {
                     exclude: AttributesExcludesProyectPreview,
                     include: AttributesIncludesProyectPreview,

@@ -12,7 +12,7 @@ const getWhereProjectFilter = (params) => {
             [sequelize_1.Op.not]: null
         }
     };
-    const clasificacionWhere = params.Estado != '' ? {
+    const clasificacionWhere = params.Sector != '' ? {
         [sequelize_1.Op.eq]: exports.getFkClasificacion(params.Sector)
     } : {
         [sequelize_1.Op.or]: {

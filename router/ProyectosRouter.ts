@@ -47,6 +47,6 @@ router.get("/cantidad/clasificacion",middlewareToken,getCantProyectForType);
 router.get("/regiones",middlewareToken,getRegionesComunas);
 router.get("/:idRegion/comunas",middlewareToken,getComunasForRegion);
 router.get("/mandantes",middlewareToken,getMandantes);
-//TODO: eliminar comentario para agregar proyectos desde json
+//TODO: eliminar comentario para agregar proyectos desde jsonz
 //router.get("/insert/toJso",InsertProyect)
 export default router;

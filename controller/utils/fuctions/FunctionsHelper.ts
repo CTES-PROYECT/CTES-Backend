@@ -30,9 +30,8 @@ export const getWhereProjectFilter = (params: params) => {
             [Op.not]: null
         }
     };
-    const clasificacionWhere = params.Estado != '' ? {
+    const clasificacionWhere = params.Sector != '' ? {
         [Op.eq]: getFkClasificacion(params.Sector)
-
     } : {
         [Op.or]: {
             [Op.is]: null,
@@ -108,5 +107,5 @@ export const getFkClasificacion = (sector: String) => {
             idClasificacion = e.id
         }
     });
-    return idClasificacion;
+     return idClasificacion;
 }

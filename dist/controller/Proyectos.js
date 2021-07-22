@@ -31,8 +31,6 @@ const getProjectPreview = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const { params } = req.body;
         if (params) {
             const ProyectsFilter = yield Proyecto_1.default.findAll({
-                limit: parseInt(size),
-                offset: parseInt(skip),
                 attributes: {
                     exclude: tables_1.AttributesExcludesProyectPreview,
                     include: tables_1.AttributesIncludesProyectPreview,

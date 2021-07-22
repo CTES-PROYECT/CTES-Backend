@@ -29,7 +29,7 @@ router.get("/cantidad/clasificacion", middlewareToken, Proyectos_1.getCantProyec
 router.get("/regiones", middlewareToken, Proyectos_1.getRegionesComunas);
 router.get("/:idRegion/comunas", middlewareToken, Proyectos_1.getComunasForRegion);
 router.get("/mandantes", middlewareToken, Proyectos_1.getMandantes);
-//TODO: eliminar comentario para agregar proyectos desde json
+//TODO: eliminar comentario para agregar proyectos desde jsonz
 //router.get("/insert/toJso",InsertProyect)
 exports.default = router;
 //# sourceMappingURL=ProyectosRouter.js.map
