@@ -3,6 +3,7 @@ import { Op, Sequelize, WhereOptions } from "sequelize";
 
 
 import { AllClasificacionesArray, EstadoProyectosConstantesArray } from "../../../constant/tables";
+import ModelLocalizacion from "../../../models/db/Localizacion";
 
 interface params {
     NombreProyecto: String,
@@ -19,7 +20,7 @@ interface params {
 }
 
 
-export const getWhereProjectFilter = (params: params) => {
+export const getWhereProjectFilter = async (params: params) => {
 
     const stadoWhere = params.Estado != '' ? {
         [Op.eq]: getFkEstado(params.Estado)
@@ -39,7 +40,7 @@ export const getWhereProjectFilter = (params: params) => {
         }
     };
 
-    const loactionWhere = getFkLocalization(params.Region, params.Comuna);
+    const loactionWhere = await getFkLocalization(params.Region, params.Comuna);
 
     const mandanteWhere = (params.NombreMandante != '') ? {
         [Op.eq]: params.NombreMandante,
@@ -63,7 +64,7 @@ export const getWhereProjectFilter = (params: params) => {
 
 }
 
-export const getFkLocalization = (Region: string | number,
+export const getFkLocalization =async (Region: string | number,
     Comuna: string | number,) => {
 
     if (Comuna != '' && Region != '') {
@@ -72,8 +73,10 @@ export const getFkLocalization = (Region: string | number,
 
         }
     } else if (Region != '') {
+        console.log(Region);
+        const array=await getArrayFkLocation(Region);
         return {
-            [Op.notIn]: Sequelize.literal(`SELECT * FROM "Localizacion" where "FkRegion"!=${Region};`)
+            [Op.in]: array
         }
     } else if (Comuna != '') {
         return {
@@ -98,6 +101,18 @@ export const getFkEstado = (estado: String) => {
         }
     });
     return idEstado;
+}
+
+const getArrayFkLocation=async (id:any)=>{
+    const locations = await ModelLocalizacion.findAll({
+        where:{
+            FkRegion:{
+                [Op.eq]:id
+            }
+        }
+    });
+    console.log(locations.length);
+    return locations.map(l=>l.get().id);
 }
 
 export const getFkClasificacion = (sector: String) => {

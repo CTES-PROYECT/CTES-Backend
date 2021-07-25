@@ -30,12 +30,13 @@ const getProjectPreview = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const skip = req.query.skip ? req.query["skip"] : 0;
         const { params } = req.body;
         if (params) {
+            const whereParmas = yield FunctionsHelper_1.getWhereProjectFilter(params);
             const ProyectsFilter = yield Proyecto_1.default.findAll({
                 attributes: {
                     exclude: tables_1.AttributesExcludesProyectPreview,
                     include: tables_1.AttributesIncludesProyectPreview,
                 },
-                where: FunctionsHelper_1.getWhereProjectFilter(params)
+                where: whereParmas
             });
             return res.json({
                 status: "OK",

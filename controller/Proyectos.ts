@@ -25,12 +25,13 @@ export const getProjectPreview = async (req: Request, res: Response) => {
         const { params } = req.body;
 
         if (params) {
+            const whereParmas = await getWhereProjectFilter(params)
             const ProyectsFilter = await ModelProyecto.findAll({
                 attributes: {
                     exclude: AttributesExcludesProyectPreview,
                     include: AttributesIncludesProyectPreview,
                 },
-                where: getWhereProjectFilter(params)
+                where: whereParmas
             });
             return res.json({
                 status: "OK",
