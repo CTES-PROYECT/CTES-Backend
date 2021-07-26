@@ -6,9 +6,10 @@ import {
     AttributesIncludesProyectPreview,
     AttributesExcludesFKProyect,
     EstadoProyectosConstantes,
+    Roles,
 } from "../constant/tables";
 import ModelProyecto from "../models/db/Proyecto";
-import { Op, Sequelize } from "sequelize";
+import { Op, Sequelize, where } from "sequelize";
 import ModelEstadoProyecto from "../models/db/EstadoProyecto";
 import ModelRegiones from "../models/db/Regiones";
 import ModelLocalizacion from "../models/db/Localizacion";
@@ -16,6 +17,9 @@ import ModelClasificacion from "../models/db/Clasificacion";
 import ModelComuna from "../models/db/Comuna";
 import ModelContratista from "../models/db/Contratista";
 import { getFkClasificacion, getFkEstado, getFkLocalization, getWhereProjectFilter } from "./utils/fuctions/FunctionsHelper";
+import { token } from "morgan";
+import { validatePermissionsForId, validatorRequest } from "./utils/validations";
+import { helperCrearProyecto } from "./utils/fuctions/CreateProyectos";
 
 export const getProjectPreview = async (req: Request, res: Response) => {
     try {
@@ -47,6 +51,39 @@ export const getProjectPreview = async (req: Request, res: Response) => {
                 exclude: AttributesExcludesProyectPreview,
                 include: AttributesIncludesProyectPreview,
             },
+            where: {
+                Enabled: {
+                    [Op.eq]: true
+                }
+            }
+        });
+
+        return res.json({
+            status: "OK",
+            msg: ResponseCorrect.LoadProjectSuccefly,
+            data: Proyects,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: "ERROR",
+            msg: ResponseError.ErrorServidor,
+        });
+    }
+};
+
+export const getProjectPending = async (req: Request, res: Response) => {
+    try {
+        const Proyects = await ModelProyecto.findAll({
+            attributes: {
+                exclude: AttributesExcludesProyectPreview,
+                include: AttributesIncludesProyectPreview,
+            },
+            where: {
+                Enabled: {
+                    [Op.is]: null
+                }
+            }
         });
 
         return res.json({
@@ -69,7 +106,7 @@ export const getCantProyectForState = async (req: Request, res: Response) => {
         attributes: {
             include: [
                 [Sequelize.literal(`(
-            SELECT COUNT(*) FROM "Proyectos" AS p WHERE p."FkEstadoProyecto" = "EstadoProyecto"."id")`),
+            SELECT COUNT(*) FROM "Proyectos" AS p WHERE p."FkEstadoProyecto" = "EstadoProyecto"."id" and p."Enabled" = 'true'  ) `),
                     "cantidad",]
             ],
         }
@@ -94,7 +131,7 @@ export const getCantProyectForType = async (req: Request, res: Response) => {
         attributes: {
             include: [
                 [Sequelize.literal(`(
-            SELECT COUNT(*) FROM "Proyectos" AS p WHERE p."FkClasificacion" = "Clasificacion"."id")`),
+            SELECT COUNT(*) FROM "Proyectos" AS p WHERE p."FkClasificacion" = "Clasificacion"."id" and p."Enabled" = 'true' )`),
                     "cantidad",]
             ],
         }
@@ -126,6 +163,9 @@ export const getCantProyectForRegion = async (req: Request, res: Response) => {
             SELECT "NameRegion" FROM "Regiones" AS r WHERE r.id = "Localizacion"."FkRegion")`),
                 "NameRegion",
             ],
+            [Sequelize.literal(`(
+                SELECT "id" FROM "Regiones" AS r WHERE r.id = "Localizacion"."FkRegion")`),
+                "id",]
         ],
         group: ['FkRegion'],
     });
@@ -150,7 +190,13 @@ export const getCantProyectForRegion = async (req: Request, res: Response) => {
 
 export const getCantidadPrject = async (req: Request, res: Response) => {
     try {
-        const CantProject = await ModelProyecto.findAll();
+        const CantProject = await ModelProyecto.findAll({
+            where: {
+                Enabled: {
+                    [Op.eq]: true
+                }
+            }
+        });
         res.json({
             status: "OK",
             msg: ResponseCorrect.LoadInfoProject,
@@ -186,6 +232,9 @@ export const getCantTotalLongitud = async (req: Request, res: Response) => {
         where: {
             FkEstadoProyecto: {
                 [Op.eq]: EstadoProyectosConstantes.OPERACIONMANTENIMIENTO
+            },
+            Enabled: {
+                [Op.eq]: true
             }
         },
         attributes: {
@@ -283,6 +332,78 @@ export const getComunasForRegion = async (req: Request, res: Response) => {
             status: "ERROR",
             msg: ResponseError.ErrorServidor,
         });
+    }
+
+}
+
+export const addNewProject = async (req: Request, res: Response) => {
+    const { idUser, form } = req.body;
+
+
+    const premissions: boolean = await validatePermissionsForId(idUser, Roles.informador);
+
+    if (!premissions) {
+        return res.status(401).json({
+            resp: 'ERROR',
+            msg: 'Usuario sin autorizacion para la peticion'
+        });
+    }
+
+
+    try {
+        const p = await helperCrearProyecto(form);
+        return res.json({
+            status: 'OK',
+            msg: 'Proyecto creado con exito'
+        })
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: 'ERROR',
+            msg: 'Error al crear proyecto'
+        })
+    }
+
+}
+
+
+export const changeEnable = async(req: Request, res: Response)=>{
+
+    const validation = validatorRequest(req);
+    if (validation) {
+        return res.status(400).json(validation);
+    }
+
+    const { idUser, enable, idProject} = req.body;
+
+    const premissions: boolean = await validatePermissionsForId(idUser, Roles.validador);
+    console.log(req.body.idProject);
+    
+    if(!premissions){
+        return res.status(401).json({
+            resp: 'ERROR',
+            msg: 'Usuario sin autorizacion para la peticion'
+        });
+    }
+    
+
+
+    try {
+        const project = await ModelProyecto.findByPk(idProject);
+        console.log(project);
+        project?.update({Enabled:enable});
+        await project?.save();
+        return res.json({
+            status:'OK',
+            msg:'Projecto Actualizado con exito'
+        })
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            status: 'ERROR',
+            msg: 'Error al actualizar el projecto'
+        })
     }
 
 }

@@ -43,13 +43,29 @@ const getWhereProjectFilter = (params) => __awaiter(void 0, void 0, void 0, func
         }
     };
     return {
-        NameProyecto: {
-            [sequelize_1.Op.substring]: params.NombreProyecto.toUpperCase(),
-        },
+        [sequelize_1.Op.or]: [
+            {
+                NameProyecto: {
+                    [sequelize_1.Op.substring]: params.NombreProyecto.toUpperCase(),
+                },
+            }, {
+                NameProyecto: {
+                    [sequelize_1.Op.substring]: params.NombreProyecto.toLowerCase(),
+                },
+            },
+            {
+                NameProyecto: {
+                    [sequelize_1.Op.substring]: params.NombreProyecto,
+                },
+            }
+        ],
         FkEstadoProyecto: stadoWhere,
         FkClasificacion: clasificacionWhere,
         FkLocalizacion: loactionWhere,
-        FkContratista: mandanteWhere
+        FkContratista: mandanteWhere,
+        Enabled: {
+            [sequelize_1.Op.eq]: true
+        }
     };
 });
 exports.getWhereProjectFilter = getWhereProjectFilter;
@@ -84,7 +100,7 @@ exports.getFkLocalization = getFkLocalization;
 const getFkEstado = (estado) => {
     let idEstado = 0;
     tables_1.EstadoProyectosConstantesArray.forEach((e) => {
-        if (e.name === estado) {
+        if (e.name.toUpperCase() === estado.toUpperCase()) {
             idEstado = e.id;
         }
     });

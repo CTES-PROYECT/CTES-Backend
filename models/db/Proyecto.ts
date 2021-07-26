@@ -12,6 +12,7 @@ import ModelOfIngenieria from "./OfIngenieria";
 const ModelProyecto = db.define(
   "Proyectos",
   {
+    
     NameProyecto: {
       type: DataTypes.STRING,
     },
@@ -33,6 +34,9 @@ const ModelProyecto = db.define(
         model: ModelDateProyecto,
         key: "id",
       },
+    },
+    Enabled:{
+      type:DataTypes.BOOLEAN,
     },
     FkMetodoConstructivo: {
       type: DataTypes.INTEGER,

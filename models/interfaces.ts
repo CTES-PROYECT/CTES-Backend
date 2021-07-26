@@ -16,12 +16,12 @@ interface Proyectos {
 
 interface Localizacion {
   Direccion?: string;
-  FkComuna?: number;
-  FkRegion?: number;
+  FkComuna: number | null;
+  FkRegion: number | null;
 }
 
 interface DateProyect {
-  PlazoEjecucion?: string;
+  PlazoEjecucion: number| null;
   FechaLicitacion?: string;
   FechaInicioObras?: string;
 }
@@ -33,9 +33,9 @@ interface Contratista {
 }
 
 interface Caracteristicas {
-  Longitud?: string;
-  Seccion?: string;
-  Pendiente?: string;
+  Longitud: number | null;
+  Seccion:  string | null;
+  Pendiente:  string | null;
 }
 
 interface Socios {

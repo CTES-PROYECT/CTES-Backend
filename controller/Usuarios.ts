@@ -86,6 +86,7 @@ export const registerUser = async (req: Request, res: Response) => {
             msg: ResponseCorrect.UserCreateCorrectly,
         });
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             status: "ERROR",
             msg: ResponseError.ErrorServidor,

@@ -12,7 +12,7 @@ class Server {
   constructor() {
     this.app = express();
     this.app.use(morgan("tiny"));
-    this.port = process.env.PORT || "5001";
+    this.port = process.env.PORT || "51000";
 
     this.middlewares();
     this.dataBaseConnection();

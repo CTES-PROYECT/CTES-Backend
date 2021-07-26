@@ -26,6 +26,7 @@ exports.EstadoProyectosConstantesArray = [
     { name: "SEIA", id: 1 },
     { name: "PREINVERSION", id: 2 },
     { name: "Ingeniería", id: 3 },
+    { name: "INGENIERIA", id: 3 },
     { name: "Licitación", id: 4 },
     { name: "Construcción", id: 5 },
     { name: "Operación y Mantenimiento", id: 6 },

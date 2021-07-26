@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Model, where } from "sequelize/types";
-import { EstadoProyectosConstantes } from "../../../constant/tables";
+import { EstadoProyectosConstantes, formAddProject } from "../../../constant/tables";
 import ModelContratista from "../../../models/db/Contratista";
 import ModelDateProyecto from "../../../models/db/DateProyecto";
 import ModelProyecto from "../../../models/db/Proyecto";
@@ -18,65 +18,69 @@ import {
   createContratista,
   searchClasificacionFK,
   searchEstadoFK,
+  createOficinasIng,
+  createFkDate,
+  createMetodoConstructivo,
 } from "./CreateFK";
 
 
-export const InsertProyect = async (req: Request, res: Response) => {
-  try {
 
-    const fileContents = readFileSync(`${__dirname}/convertcsv.json`, "utf-8");
-		const Proyect = JSON.parse(fileContents);
-    let data =[];let i=1;
-    for (const proyect of Proyect) {
-      let tem=await crearProyecto(proyect,i);
-      data.push(tem);
-      i++;
-    }
-    return res.json({
-      data: data,
+
+export const helperCrearProyecto = async (p: formAddProject) => {
+  var idContratista = null;
+if(p.NombreMandante!=null){
+  if(typeof p.NombreMandante !== "number"){
+     idContratista = await createContratista({
+      FullName: p.NombreMandante,
     });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ err: error });
   }
-};
-
-const crearProyecto = async (p: any,i :number) => {
+}
   
 
-  const idContratista = await createContratista({
-    FullName: p.Mandante,
-  });
-
-  const idRegion = await searchRegionFK(p.Region);
 
   const idCaracteristicas = await createCaracteristicasFK({
-    Longitud: p.mt?.toString(),
+    Longitud: p.Longitud,
+    Pendiente:p.Pendiente,
+    Seccion:p.Seccion
   });
+
+  const FKDate = await createFkDate({
+    FechaInicioObras:p.FechaInicioObras,
+    FechaLicitacion:p.FechaLicitacion,
+    PlazoEjecucion:p.PlazoEjecucion
+  });
+
 
   const idLocation = await createLocalizacion({
-    FkRegion: idRegion,
+    FkRegion: p.Region,
+    FkComuna:p.Comuna
   });
 
-  const idClasificacion = await searchClasificacionFK(
-    p.Tipos_Tuneles
-  )
 
-  const idEstado = await searchEstadoFK(
-    p.Etapa
-  )
+  const FKOficina= await createOficinasIng(p.Oficinas);
+  
+  var FkMetodoConstructivoInput =null;
+  if(p.MetodoConstructivo!==null){
+    FkMetodoConstructivoInput = await createMetodoConstructivo(p.MetodoConstructivo);
 
+  }
 
   const project = await ModelProyecto.create({
-    NameProyecto: p.Nombre_Proyecto,
-    FkEstadoProyecto: idEstado,
-    FkContratista: idContratista,
+    NameProyecto: p.NombreProyecto,
+    FkEstadoProyecto: p.Estado,
+    FkContratista: (idContratista!=null) ? idContratista : p.NombreMandante,
     FkCaracteristicas: idCaracteristicas,
     FkLocalizacion: idLocation,
-    FkClasificacion:idClasificacion
+    FkClasificacion:p.Sector,
+    FkOfIngenieria:FKOficina,
+    MontoInversion:p.MontoProyecto,
+    FkDateProyecto:FKDate,
+    FkMetodoConstructivo:FkMetodoConstructivoInput
     
-  }).then(()=>console.log(`PROYECTO CREADO CON EXITO ${i}`)).
-  catch(()=>console.log(`PROYECTO ERROR ${i}`));
+  }).
+  catch((e)=>{
+    console.log(e);
+  });
 
   return project;
 };

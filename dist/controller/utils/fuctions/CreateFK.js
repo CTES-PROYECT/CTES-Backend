@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchEstadoFK = exports.searchClasificacionFK = exports.searchRegionFK = exports.createSolicitudProyecto = exports.createSocio = exports.createProyecto = exports.createOfIngenieria = exports.createMetodoConstructivo = exports.createLocalizacion = exports.createDateProyectFK = exports.createContratista = exports.createContratistaFK = exports.createCaracteristicasFK = void 0;
+exports.searchEstadoFK = exports.searchClasificacionFK = exports.searchRegionFK = exports.createSolicitudProyecto = exports.createSocio = exports.createProyecto = exports.createOfIngenieria = exports.createMetodoConstructivo = exports.createOficinasIng = exports.createLocalizacion = exports.createDateProyectFK = exports.createContratista = exports.createContratistaFK = exports.createFkDate = exports.createCaracteristicasFK = void 0;
 const sequelize_1 = require("sequelize");
 const tables_1 = require("../../../constant/tables");
 const Caracteristicas_1 = __importDefault(require("../../../models/db/Caracteristicas"));
@@ -32,6 +32,13 @@ function createCaracteristicasFK(caract) {
     });
 }
 exports.createCaracteristicasFK = createCaracteristicasFK;
+function createFkDate(caract) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const caracteristica = yield DateProyecto_1.default.create(Object.assign({}, caract));
+        return caracteristica.get().id;
+    });
+}
+exports.createFkDate = createFkDate;
 const createContratistaFK = (contratista) => __awaiter(void 0, void 0, void 0, function* () {
     const exist = yield Contratista_1.default.findOne({
         where: {
@@ -44,7 +51,6 @@ const createContratistaFK = (contratista) => __awaiter(void 0, void 0, void 0, f
         return contra.get().id;
     }
     else {
-        console.log(exist.get().id);
         const { id } = exist.get();
         return id;
     }
@@ -56,7 +62,6 @@ const createContratista = (contratista) => new Promise((resolve) => __awaiter(vo
             FullName: { [sequelize_1.Op.eq]: contratista.FullName },
         },
     });
-    console.log(exist);
     if (exist == null) {
         const contra = yield Contratista_1.default.create(contratista);
         resolve(contra.get().id);
@@ -81,18 +86,27 @@ function createLocalizacion(location) {
     });
 }
 exports.createLocalizacion = createLocalizacion;
+function createOficinasIng(dir) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const loc = yield OfIngenieria_1.default.create({
+            Direccion: dir,
+        });
+        return loc.get().id;
+    });
+}
+exports.createOficinasIng = createOficinasIng;
 function createMetodoConstructivo(NameMetodo) {
     return __awaiter(this, void 0, void 0, function* () {
         const exist = yield MetodoConstructivo_1.default.findOne({
             where: {
-                NameMetodo: NameMetodo,
+                NameMetodo: NameMetodo.toUpperCase(),
             },
         });
         if (exist) {
             return exist.get().id;
         }
         const metodoConstuctivo = yield MetodoConstructivo_1.default.create({
-            NameMetodo: NameMetodo,
+            NameMetodo: NameMetodo.toUpperCase(),
         });
         return metodoConstuctivo.get().id;
     });

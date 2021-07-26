@@ -36,6 +36,9 @@ const ModelProyecto = connect_1.default.define("Proyectos", {
             key: "id",
         },
     },
+    Enabled: {
+        type: sequelize_1.DataTypes.BOOLEAN,
+    },
     FkMetodoConstructivo: {
         type: sequelize_1.DataTypes.INTEGER,
         references: {

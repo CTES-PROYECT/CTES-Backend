@@ -53,18 +53,35 @@ export const getWhereProjectFilter = async (params: params) => {
 
 
     return {
-        NameProyecto: {
-            [Op.substring]: params.NombreProyecto.toUpperCase(),
-        },
+        [Op.or]: [
+            {
+                NameProyecto: {
+                    [Op.substring]: params.NombreProyecto.toUpperCase(),
+                },
+            }, {
+                NameProyecto: {
+                    [Op.substring]: params.NombreProyecto.toLowerCase(),
+                },
+            },
+            {
+                NameProyecto: {
+                    [Op.substring]: params.NombreProyecto,
+                },
+            }
+        ],
+
         FkEstadoProyecto: stadoWhere,
         FkClasificacion: clasificacionWhere,
         FkLocalizacion: loactionWhere,
-        FkContratista: mandanteWhere
+        FkContratista: mandanteWhere,
+        Enabled: {
+            [Op.eq]: true
+        }
     };
 
 }
 
-export const getFkLocalization =async (Region: string | number,
+export const getFkLocalization = async (Region: string | number,
     Comuna: string | number,) => {
 
     if (Comuna != '' && Region != '') {
@@ -74,7 +91,7 @@ export const getFkLocalization =async (Region: string | number,
         }
     } else if (Region != '') {
         console.log(Region);
-        const array=await getArrayFkLocation(Region);
+        const array = await getArrayFkLocation(Region);
         return {
             [Op.in]: array
         }
@@ -96,23 +113,23 @@ export const getFkLocalization =async (Region: string | number,
 export const getFkEstado = (estado: String) => {
     let idEstado: number = 0;
     EstadoProyectosConstantesArray.forEach((e) => {
-        if (e.name === estado) {
+        if (e.name.toUpperCase() === estado.toUpperCase()) {
             idEstado = e.id
         }
     });
     return idEstado;
 }
 
-const getArrayFkLocation=async (id:any)=>{
+const getArrayFkLocation = async (id: any) => {
     const locations = await ModelLocalizacion.findAll({
-        where:{
-            FkRegion:{
-                [Op.eq]:id
+        where: {
+            FkRegion: {
+                [Op.eq]: id
             }
         }
     });
     console.log(locations.length);
-    return locations.map(l=>l.get().id);
+    return locations.map(l => l.get().id);
 }
 
 export const getFkClasificacion = (sector: String) => {
@@ -122,5 +139,5 @@ export const getFkClasificacion = (sector: String) => {
             idClasificacion = e.id
         }
     });
-     return idClasificacion;
+    return idClasificacion;
 }

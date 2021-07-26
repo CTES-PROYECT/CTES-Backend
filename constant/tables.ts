@@ -1,5 +1,4 @@
 import { ProjectionAlias, Sequelize } from "sequelize";
-import { Literal } from "sequelize/types/lib/utils";
 
 export const Roles = {
   validador: 2,
@@ -28,6 +27,7 @@ export const EstadoProyectosConstantesArray = [
   {name:"SEIA",id: 1},
   {name:"PREINVERSION",id: 2},
   {name:"Ingeniería",id: 3},
+  {name:"INGENIERIA",id: 3},
   {name:"Licitación",id: 4},
   {name:"Construcción",id: 5},
   {name:"Operación y Mantenimiento",id: 6},
@@ -219,3 +219,22 @@ export const AttributesIncludesOneProyect: (string | ProjectionAlias)[] = [
     "ComunaOfIngenieria",
   ],
 ];
+
+
+export interface formAddProject{
+  NombreProyecto: string,
+  Estado: null | number,
+  Sector:  null | number,
+  Region:  null | number,
+  Comuna:  null | number,
+  PlazoEjecucion:  null | number,
+  FechaLicitacion: any,
+  FechaInicioObras: any,
+  NombreMandante:  null | number | string,
+  MontoProyecto:  null | number,
+  Longitud:  null | number,
+  Seccion:  null | string,
+  Pendiente:  null | string,
+  MetodoConstructivo:  null | string,
+  Oficinas:  null | string
+}

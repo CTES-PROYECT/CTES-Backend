@@ -30,6 +30,17 @@ export async function createCaracteristicasFK(
   return caracteristica.get().id;
 }
 
+export async function createFkDate(
+  caract: DateProyect
+): Promise<number> {
+  const caracteristica = await ModelDateProyecto.create({
+    ...caract,
+  });
+
+  return caracteristica.get().id;
+}
+
+
 export const createContratistaFK = async (
   contratista: Contratista
 ): Promise<number | undefined> => {
@@ -43,7 +54,6 @@ export const createContratistaFK = async (
     const contra = await ModelContratista.create(contratista);
     return contra.get().id;
   } else {
-    console.log(exist.get().id);
     const { id } = exist.get();
     return id;
   }
@@ -56,7 +66,6 @@ export const createContratista = (contratista: Contratista) =>
         FullName: { [Op.eq]: contratista.FullName },
       },
     });
-    console.log(exist);
     if (exist == null) {
       const contra = await ModelContratista.create(contratista);
       resolve(contra.get().id);
@@ -84,12 +93,23 @@ export async function createLocalizacion(
   return loc.get().id;
 }
 
+export async function createOficinasIng(
+  dir: string | null
+): Promise<number | undefined> {
+  const loc = await ModelOfIngenieria.create({
+    Direccion:dir,
+  });
+  return loc.get().id;
+}
+
+
+
 export async function createMetodoConstructivo(
   NameMetodo: string
 ): Promise<number | undefined> {
   const exist = await ModelMetodoConstructivo.findOne({
     where: {
-      NameMetodo: NameMetodo,
+      NameMetodo: NameMetodo.toUpperCase(),
     },
   });
   if (exist) {
@@ -97,7 +117,7 @@ export async function createMetodoConstructivo(
   }
 
   const metodoConstuctivo = await ModelMetodoConstructivo.create({
-    NameMetodo: NameMetodo,
+    NameMetodo: NameMetodo.toUpperCase(),
   });
 
   return metodoConstuctivo.get().id;

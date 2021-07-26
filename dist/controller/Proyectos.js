@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getComunasForRegion = exports.getMandantes = exports.getRegionesComunas = exports.getCantTotalLongitud = exports.getAllInfoProject = exports.getCantidadPrject = exports.getCantProyectForRegion = exports.getCantProyectForType = exports.getCantProyectForState = exports.getProjectPreview = void 0;
+exports.changeEnable = exports.addNewProject = exports.getComunasForRegion = exports.getMandantes = exports.getRegionesComunas = exports.getCantTotalLongitud = exports.getAllInfoProject = exports.getCantidadPrject = exports.getCantProyectForRegion = exports.getCantProyectForType = exports.getCantProyectForState = exports.getProjectPending = exports.getProjectPreview = void 0;
 const msgResponse_1 = require("../constant/msgResponse");
 const tables_1 = require("../constant/tables");
 const Proyecto_1 = __importDefault(require("../models/db/Proyecto"));
@@ -24,6 +24,8 @@ const Clasificacion_1 = __importDefault(require("../models/db/Clasificacion"));
 const Comuna_1 = __importDefault(require("../models/db/Comuna"));
 const Contratista_1 = __importDefault(require("../models/db/Contratista"));
 const FunctionsHelper_1 = require("./utils/fuctions/FunctionsHelper");
+const validations_1 = require("./utils/validations");
+const CreateProyectos_1 = require("./utils/fuctions/CreateProyectos");
 const getProjectPreview = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const size = req.query.size ? req.query["size"] : 4; // Make sure to parse the limit to number
@@ -52,6 +54,11 @@ const getProjectPreview = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 exclude: tables_1.AttributesExcludesProyectPreview,
                 include: tables_1.AttributesIncludesProyectPreview,
             },
+            where: {
+                Enabled: {
+                    [sequelize_1.Op.eq]: true
+                }
+            }
         });
         return res.json({
             status: "OK",
@@ -68,12 +75,40 @@ const getProjectPreview = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getProjectPreview = getProjectPreview;
+const getProjectPending = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const Proyects = yield Proyecto_1.default.findAll({
+            attributes: {
+                exclude: tables_1.AttributesExcludesProyectPreview,
+                include: tables_1.AttributesIncludesProyectPreview,
+            },
+            where: {
+                Enabled: {
+                    [sequelize_1.Op.is]: null
+                }
+            }
+        });
+        return res.json({
+            status: "OK",
+            msg: msgResponse_1.ResponseCorrect.LoadProjectSuccefly,
+            data: Proyects,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.ErrorServidor,
+        });
+    }
+});
+exports.getProjectPending = getProjectPending;
 const getCantProyectForState = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const resp = yield EstadoProyecto_1.default.findAll({
         attributes: {
             include: [
                 [sequelize_1.Sequelize.literal(`(
-            SELECT COUNT(*) FROM "Proyectos" AS p WHERE p."FkEstadoProyecto" = "EstadoProyecto"."id")`),
+            SELECT COUNT(*) FROM "Proyectos" AS p WHERE p."FkEstadoProyecto" = "EstadoProyecto"."id" and p."Enabled" = 'true'  ) `),
                     "cantidad",]
             ],
         }
@@ -96,7 +131,7 @@ const getCantProyectForType = (req, res) => __awaiter(void 0, void 0, void 0, fu
         attributes: {
             include: [
                 [sequelize_1.Sequelize.literal(`(
-            SELECT COUNT(*) FROM "Proyectos" AS p WHERE p."FkClasificacion" = "Clasificacion"."id")`),
+            SELECT COUNT(*) FROM "Proyectos" AS p WHERE p."FkClasificacion" = "Clasificacion"."id" and p."Enabled" = 'true' )`),
                     "cantidad",]
             ],
         }
@@ -125,6 +160,9 @@ const getCantProyectForRegion = (req, res) => __awaiter(void 0, void 0, void 0, 
             SELECT "NameRegion" FROM "Regiones" AS r WHERE r.id = "Localizacion"."FkRegion")`),
                 "NameRegion",
             ],
+            [sequelize_1.Sequelize.literal(`(
+                SELECT "id" FROM "Regiones" AS r WHERE r.id = "Localizacion"."FkRegion")`),
+                "id",]
         ],
         group: ['FkRegion'],
     });
@@ -146,7 +184,13 @@ const getCantProyectForRegion = (req, res) => __awaiter(void 0, void 0, void 0, 
 exports.getCantProyectForRegion = getCantProyectForRegion;
 const getCantidadPrject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const CantProject = yield Proyecto_1.default.findAll();
+        const CantProject = yield Proyecto_1.default.findAll({
+            where: {
+                Enabled: {
+                    [sequelize_1.Op.eq]: true
+                }
+            }
+        });
         res.json({
             status: "OK",
             msg: msgResponse_1.ResponseCorrect.LoadInfoProject,
@@ -181,6 +225,9 @@ const getCantTotalLongitud = (req, res) => __awaiter(void 0, void 0, void 0, fun
         where: {
             FkEstadoProyecto: {
                 [sequelize_1.Op.eq]: tables_1.EstadoProyectosConstantes.OPERACIONMANTENIMIENTO
+            },
+            Enabled: {
+                [sequelize_1.Op.eq]: true
             }
         },
         attributes: {
@@ -274,4 +321,62 @@ const getComunasForRegion = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.getComunasForRegion = getComunasForRegion;
+const addNewProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idUser, form } = req.body;
+    const premissions = yield validations_1.validatePermissionsForId(idUser, tables_1.Roles.informador);
+    if (!premissions) {
+        return res.status(401).json({
+            resp: 'ERROR',
+            msg: 'Usuario sin autorizacion para la peticion'
+        });
+    }
+    try {
+        const p = yield CreateProyectos_1.helperCrearProyecto(form);
+        return res.json({
+            status: 'OK',
+            msg: 'Proyecto creado con exito'
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: 'ERROR',
+            msg: 'Error al crear proyecto'
+        });
+    }
+});
+exports.addNewProject = addNewProject;
+const changeEnable = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const validation = validations_1.validatorRequest(req);
+    if (validation) {
+        return res.status(400).json(validation);
+    }
+    const { idUser, enable, idProject } = req.body;
+    const premissions = yield validations_1.validatePermissionsForId(idUser, tables_1.Roles.validador);
+    console.log(req.body.idProject);
+    if (!premissions) {
+        return res.status(401).json({
+            resp: 'ERROR',
+            msg: 'Usuario sin autorizacion para la peticion'
+        });
+    }
+    try {
+        const project = yield Proyecto_1.default.findByPk(idProject);
+        console.log(project);
+        project === null || project === void 0 ? void 0 : project.update({ Enabled: enable });
+        yield (project === null || project === void 0 ? void 0 : project.save());
+        return res.json({
+            status: 'OK',
+            msg: 'Projecto Actualizado con exito'
+        });
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            status: 'ERROR',
+            msg: 'Error al actualizar el projecto'
+        });
+    }
+});
+exports.changeEnable = changeEnable;
 //# sourceMappingURL=Proyectos.js.map
