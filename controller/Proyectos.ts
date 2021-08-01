@@ -21,6 +21,7 @@ import { token } from "morgan";
 import { validatePermissionsForId, validatorRequest } from "./utils/validations";
 import { helperCrearProyecto } from "./utils/fuctions/CreateProyectos";
 
+
 export const getProjectPreview = async (req: Request, res: Response) => {
     try {
         const size: any = req.query.size ? req.query["size"] : 4; // Make sure to parse the limit to number

@@ -4,6 +4,7 @@ import routerUser from "../router/Usuarios";
 import routerProyect from "../router/ProyectosRouter";
 import morgan from "morgan";
 import cors from "cors";
+import path from "path";
 
 class Server {
   private app: Application;
@@ -13,6 +14,7 @@ class Server {
     this.app = express();
     this.app.use(morgan("tiny"));
     this.port = process.env.PORT || "51000";
+    
 
     this.middlewares();
     this.dataBaseConnection();
@@ -28,10 +30,18 @@ class Server {
     }
   }
 
+  private publicFolder(){
+
+    const publicPath = path.resolve( __dirname, '../public' );
+    this.app.use( express.static(publicPath) );
+
+  }
+
   listen() {
     this.app.listen(this.port, () => {
       console.log("servidor escuchando en puerto: " + this.port);
     });
+    this.publicFolder();
   }
   router() {
     this.app.use("/api/users", routerUser);

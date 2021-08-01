@@ -18,6 +18,7 @@ const Usuarios_1 = __importDefault(require("../router/Usuarios"));
 const ProyectosRouter_1 = __importDefault(require("../router/ProyectosRouter"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
+const path_1 = __importDefault(require("path"));
 class Server {
     constructor() {
         this.app = express_1.default();
@@ -38,10 +39,15 @@ class Server {
             }
         });
     }
+    publicFolder() {
+        const publicPath = path_1.default.resolve(__dirname, '../public');
+        this.app.use(express_1.default.static(publicPath));
+    }
     listen() {
         this.app.listen(this.port, () => {
             console.log("servidor escuchando en puerto: " + this.port);
         });
+        this.publicFolder();
     }
     router() {
         this.app.use("/api/users", Usuarios_1.default);

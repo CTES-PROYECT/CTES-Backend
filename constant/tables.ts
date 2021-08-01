@@ -29,6 +29,8 @@ export const EstadoProyectosConstantesArray = [
   {name:"Ingeniería",id: 3},
   {name:"INGENIERIA",id: 3},
   {name:"Licitación",id: 4},
+  {name:"Licitacion",id: 4},
+  {name:"LICITACION",id: 4},
   {name:"Construcción",id: 5},
   {name:"Operación y Mantenimiento",id: 6},
   {name:"EIADIA",id: 1}
