@@ -4,7 +4,7 @@ const db = new Sequelize("dc1ri19gkqtfjc", "gcnjzmggywcibo", "68c5870a1a41b5dbf3
   host: "ec2-3-213-146-52.compute-1.amazonaws.com",
   port:5432,
   dialect: "postgres",
-  logging: true,
+  logging: false,
   ssl:true,
   dialectOptions: {
     ssl: {
