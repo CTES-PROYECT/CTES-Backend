@@ -10,7 +10,6 @@
 
 # production
 /build
-./database/connect.ts
 
 # misc
 .DS_Store
