@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response, Router} from "express";
 import {
     confimedUser,
+    getUserActive,
     logInUser,
     registerUser,
     updateRolUser,
@@ -60,11 +61,13 @@ router.put(
 router.put(
     "/update/rol",
     [
-        body("token").isString(),
+        middlewareToken,
         body("idUserPut").notEmpty(),
         body("rol").notEmpty(),
     ],
     updateRolUser
 );
+
+router.get("/active",middlewareToken,getUserActive);
 
 export default router;

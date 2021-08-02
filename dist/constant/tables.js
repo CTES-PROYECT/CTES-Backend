@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AttributesIncludesOneProyect = exports.AttributesIncludesProyectPreview = exports.AttributesExcludesFKProyect = exports.AttributesExcludesProyectPreview = exports.AllClasificacionesArray = exports.ClasificacionConstantes = exports.EstadoProyectosConstantesArray = exports.EstadoProyectosConstantes = exports.TipoSolicitudesConstantes = exports.Roles = void 0;
+exports.AttributesIncludesOneProyectUpdate = exports.AttributesIncludesOneProyect = exports.AttributesIncludesProyectPreview = exports.AttributesExcludesFKProyect = exports.AttributesExcludesProyectPreview = exports.AllClasificacionesArray = exports.ClasificacionConstantes = exports.EstadoProyectosConstantesArray = exports.EstadoSolicitudes = exports.EstadoProyectosConstantes = exports.TipoSolicitudesConstantes = exports.Roles = void 0;
 const sequelize_1 = require("sequelize");
 exports.Roles = {
     validador: 2,
@@ -11,7 +11,7 @@ exports.Roles = {
 exports.TipoSolicitudesConstantes = {
     Actualizacion: 1,
     Eliminar: 2,
-    Observacion: 3,
+    Agregar: 3,
 };
 exports.EstadoProyectosConstantes = {
     EIADIA: 1,
@@ -20,6 +20,11 @@ exports.EstadoProyectosConstantes = {
     LICITACION: 4,
     CONSTRUCCION: 5,
     OPERACIONMANTENIMIENTO: 6,
+};
+exports.EstadoSolicitudes = {
+    Pendiente: 1,
+    Aceptado: 2,
+    Rechazado: 3
 };
 exports.EstadoProyectosConstantesArray = [
     { name: "En evaluación", id: 1 },
@@ -188,6 +193,103 @@ exports.AttributesIncludesOneProyect = [
     [
         sequelize_1.Sequelize.literal(`(
             SELECT "m"."FullName" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
+        "NameContratista",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."Email" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
+        "EmailContratista",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."NumeroTelefono" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
+        "NumeroTelefonoContratista",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."Direccion" FROM "OfIngenieria" AS m WHERE m.id = "Proyectos"."FkOfIngenieria")`),
+        "DireccionOfIngenieria",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "com"."NameComuna" FROM "OfIngenieria" AS ofcina inner join "Comunas" as com on ofcina."FkComuna"=com."id" WHERE ofcina.id = "Proyectos"."FkOfIngenieria")`),
+        "ComunaOfIngenieria",
+    ],
+];
+exports.AttributesIncludesOneProyectUpdate = [
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "id" FROM "EstadoProyecto" AS e WHERE e.id = "Proyectos"."FkEstadoProyecto")`),
+        "Estado",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+        SELECT "Regiones"."id"
+        FROM "Localizacion" inner join "Regiones" on "Localizacion"."FkRegion" = "Regiones"."id"
+        WHERE
+             "Localizacion"."id" = "Proyectos"."FkLocalizacion")`),
+        "Region",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+        SELECT "Comunas"."id"
+        FROM "Localizacion" inner join "Comunas" on "Localizacion"."FkComuna" = "Comunas"."id"
+        WHERE
+             "Localizacion"."id" = "Proyectos"."FkLocalizacion")`),
+        "Comuna",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+      SELECT "DateProyecto"."FechaLicitacion"
+      FROM "DateProyecto" 
+      WHERE
+           "DateProyecto"."id" = "Proyectos"."FkDateProyecto" )`),
+        "FechaLicitacion",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+      SELECT "DateProyecto"."FechaInicioObras"
+      FROM "DateProyecto" 
+      WHERE
+           "DateProyecto"."id" = "Proyectos"."FkDateProyecto" )`),
+        "FechaInicioObras",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+      SELECT "DateProyecto"."PlazoEjecucion"
+      FROM "DateProyecto" 
+      WHERE
+           "DateProyecto"."id" = "Proyectos"."FkDateProyecto" )`),
+        "PlazoEjecucion",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."NameMetodo" FROM "MetodoConstructivo" AS m WHERE m.id = "Proyectos"."FkMetodoConstructivo")`),
+        "MetodoConstructivo",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."id" FROM "Clasificacion" AS m WHERE m.id = "Proyectos"."FkClasificacion")`),
+        "Clasificacion",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."Longitud" FROM "Caracteristicas" AS m WHERE m.id = "Proyectos"."FkCaracteristicas")`),
+        "Longitud",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."Seccion" FROM "Caracteristicas" AS m WHERE m.id = "Proyectos"."FkCaracteristicas")`),
+        "Seccion",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."Pendiente" FROM "Caracteristicas" AS m WHERE m.id = "Proyectos"."FkCaracteristicas")`),
+        "Pendiente",
+    ],
+    [
+        sequelize_1.Sequelize.literal(`(
+            SELECT "m"."id" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
         "NameContratista",
     ],
     [

@@ -7,6 +7,9 @@ import {
     AttributesExcludesFKProyect,
     EstadoProyectosConstantes,
     Roles,
+    EstadoSolicitudes,
+    TipoSolicitudesConstantes,
+    AttributesIncludesOneProyectUpdate,
 } from "../constant/tables";
 import ModelProyecto from "../models/db/Proyecto";
 import { Op, Sequelize, where } from "sequelize";
@@ -19,7 +22,8 @@ import ModelContratista from "../models/db/Contratista";
 import { getFkClasificacion, getFkEstado, getFkLocalization, getWhereProjectFilter } from "./utils/fuctions/FunctionsHelper";
 import { token } from "morgan";
 import { validatePermissionsForId, validatorRequest } from "./utils/validations";
-import { helperCrearProyecto } from "./utils/fuctions/CreateProyectos";
+import { helperCrearProyecto, helperCreateSolicitudNewProject } from "./utils/fuctions/CreateProyectos";
+import ModelSolicitudesProyectos from "../models/db/SolicitudesProyectos";
 
 
 export const getProjectPreview = async (req: Request, res: Response) => {
@@ -75,14 +79,62 @@ export const getProjectPreview = async (req: Request, res: Response) => {
 
 export const getProjectPending = async (req: Request, res: Response) => {
     try {
+
+        const solicitudes = await ModelSolicitudesProyectos.findAll({
+            where: {
+                [Op.and]: [
+                    { FkEstadoSolicitud: EstadoSolicitudes.Pendiente, },
+                    { FkTipoSolicitud: TipoSolicitudesConstantes.Agregar }
+                ]
+            }
+        })
+
         const Proyects = await ModelProyecto.findAll({
             attributes: {
                 exclude: AttributesExcludesProyectPreview,
                 include: AttributesIncludesProyectPreview,
             },
             where: {
-                Enabled: {
-                    [Op.is]: null
+                id: {
+                    [Op.in]: solicitudes.map(s => s.get().FkProyecto)
+                }
+            }
+        });
+
+        return res.json({
+            status: "OK",
+            msg: ResponseCorrect.LoadProjectSuccefly,
+            data: Proyects,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: "ERROR",
+            msg: ResponseError.ErrorServidor,
+        });
+    }
+};
+
+export const getProjectPendingActualizacion = async (req: Request, res: Response) => {
+    try {
+
+        const solicitudes = await ModelSolicitudesProyectos.findAll({
+            where: {
+                [Op.and]: [
+                    { FkEstadoSolicitud: EstadoSolicitudes.Pendiente, },
+                    { FkTipoSolicitud: TipoSolicitudesConstantes.Actualizacion }
+                ]
+            }
+        })
+
+        const Proyects = await ModelProyecto.findAll({
+            attributes: {
+                exclude: AttributesExcludesProyectPreview,
+                include: AttributesIncludesProyectPreview,
+            },
+            where: {
+                id: {
+                    [Op.in]: solicitudes.map(s => s.get().FkProyecto)
                 }
             }
         });
@@ -155,6 +207,15 @@ export const getCantProyectForRegion = async (req: Request, res: Response) => {
 
 
     const total = await ModelProyecto.count();
+
+    const locationsNotValid= await ModelProyecto.findAll({
+        where:{
+            Enabled:{
+                [Op.eq]:true
+            }
+        }
+    });
+
     const resp = await ModelLocalizacion.findAll({
         attributes: [
             'FkRegion',
@@ -169,6 +230,11 @@ export const getCantProyectForRegion = async (req: Request, res: Response) => {
                 "id",]
         ],
         group: ['FkRegion'],
+        where:{
+            id:{
+                [Op.in]:locationsNotValid.map(l=>l.get().FkLocalizacion)
+            }
+        }
     });
     if (resp) {
         return res.json({
@@ -212,12 +278,30 @@ export const getCantidadPrject = async (req: Request, res: Response) => {
 }
 
 export const getAllInfoProject = async (req: Request, res: Response) => {
+
     const { id } = req.params;
 
     const proyectForId = await ModelProyecto.findByPk(id, {
         attributes: {
             exclude: AttributesExcludesFKProyect,
             include: AttributesIncludesOneProyect,
+        },
+    });
+
+    return res.json({
+        status: "OK",
+        msg: ResponseCorrect.LoadInfoProject,
+        data: proyectForId,
+    });
+};
+
+export const getUpdateAllInfoProject = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const proyectForId = await ModelProyecto.findByPk(id, {
+        attributes: {
+            exclude: AttributesExcludesFKProyect,
+            include: AttributesIncludesOneProyectUpdate,
         },
     });
 
@@ -353,6 +437,15 @@ export const addNewProject = async (req: Request, res: Response) => {
 
     try {
         const p = await helperCrearProyecto(form);
+
+        const solicitud = await helperCreateSolicitudNewProject({
+            UserInformador: idUser,
+            FkEstadoSolicitud: EstadoSolicitudes.Pendiente,
+            FkTipoSolicitud: TipoSolicitudesConstantes.Agregar,
+            FkProyecto: p
+
+        })
+
         return res.json({
             status: 'OK',
             msg: 'Proyecto creado con exito'
@@ -368,42 +461,224 @@ export const addNewProject = async (req: Request, res: Response) => {
 
 }
 
+export const putUpdateProject = async (req: Request, res: Response) => {
+    const { idUser, form } = req.body;
 
-export const changeEnable = async(req: Request, res: Response)=>{
+    const { id } = req.params;
+
+
+    const premissions: boolean = await validatePermissionsForId(idUser, Roles.informador);
+
+    if (!premissions) {
+        return res.status(401).json({
+            resp: 'ERROR',
+            msg: 'Usuario sin autorizacion para la peticion'
+        });
+    }
+
+
+    try {
+        const p = await helperCrearProyecto(form);
+
+        const solicitud = await helperCreateSolicitudNewProject({
+            UserInformador: idUser,
+            FkEstadoSolicitud: EstadoSolicitudes.Pendiente,
+            FkTipoSolicitud: TipoSolicitudesConstantes.Actualizacion,
+            FkProyecto: p,
+            FkProyectUpdate: parseInt(id)
+        });
+
+        return res.json({
+            status: 'OK',
+            msg: 'Proyecto actualizado con exito'
+        })
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: 'ERROR',
+            msg: 'Error al crear proyecto'
+        })
+    }
+
+}
+
+
+export const changeEnable = async (req: Request, res: Response) => {
 
     const validation = validatorRequest(req);
     if (validation) {
         return res.status(400).json(validation);
     }
 
-    const { idUser, enable, idProject} = req.body;
+    const { idUser, enable, idProject } = req.body;
 
     const premissions: boolean = await validatePermissionsForId(idUser, Roles.validador);
-    console.log(req.body.idProject);
-    
-    if(!premissions){
+
+
+    if (!premissions) {
         return res.status(401).json({
             resp: 'ERROR',
             msg: 'Usuario sin autorizacion para la peticion'
         });
     }
-    
+
 
 
     try {
-        const project = await ModelProyecto.findByPk(idProject);
-        console.log(project);
-        project?.update({Enabled:enable});
-        await project?.save();
+        const solicitud = await ModelSolicitudesProyectos.findOne({
+            where: {
+                FkProyecto: {
+                    [Op.eq]: idProject
+                }
+            }
+        });
+        const projectDelete = solicitud?.get().FkProyectUpdate;
+        solicitud?.update({
+            FkEstadoSolicitud: enable == true ? EstadoSolicitudes.Aceptado : EstadoSolicitudes.Rechazado,
+            FkProyectUpdate: null
+        });
+        await solicitud?.save();
+        await ModelSolicitudesProyectos.update({
+            FkProyecto: solicitud?.get().FkProyecto,
+        },{
+            where:{
+                FkProyecto:{
+                    [Op.eq]:projectDelete
+                }
+            }
+        })
+        await ModelProyecto.destroy({
+            where:{
+                id:{
+                    [Op.eq]:projectDelete
+                }
+            }
+        })
         return res.json({
-            status:'OK',
-            msg:'Projecto Actualizado con exito'
+            status: 'OK',
+            msg: 'Projecto Actualizado con exito'
         })
     } catch (e) {
         console.log(e);
         return res.status(500).json({
             status: 'ERROR',
             msg: 'Error al actualizar el projecto'
+        })
+    }
+
+}
+
+
+export const getProyectRejectForId = async (req: Request, res: Response) => {
+    const { idUser } = req.body;
+
+    const premissions: boolean = await validatePermissionsForId(idUser, Roles.informador);
+
+    if (!premissions) {
+        return res.status(401).json({
+            resp: 'ERROR',
+            msg: 'Usuario sin autorizacion para la peticion'
+        });
+    }
+
+    try {
+
+        const solicitudes = await ModelSolicitudesProyectos.findAll({
+            where: {
+                [Op.and]: [{
+                    FkEstadoSolicitud: EstadoSolicitudes.Rechazado,
+                },
+                {
+                    UserInformador: idUser
+                }
+                ]
+            }
+        });
+
+        if (solicitudes.length === 0) {
+            return res.json({
+                status: 'ok',
+                data: []
+            });
+        }
+
+        const projects = await ModelProyecto.findAll({
+            where: {
+                id: {
+                    [Op.in]: solicitudes.map(s => s.get().FkProyecto)
+                }
+            }
+        });
+
+        return res.json({
+            status: 'ok',
+            data: projects
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: 'ERROR',
+            msg: 'Error al retornar proyectos'
+        })
+    }
+
+}
+
+export const getProyectPendingForId = async (req: Request, res: Response) => {
+    const { idUser } = req.body;
+
+    const premissions: boolean = await validatePermissionsForId(idUser, Roles.informador);
+
+    if (!premissions) {
+        return res.status(401).json({
+            resp: 'ERROR',
+            msg: 'Usuario sin autorizacion para la peticion'
+        });
+    }
+
+    try {
+
+        const solicitudes = await ModelSolicitudesProyectos.findAll({
+            where: {
+                [Op.and]: [{
+                    FkEstadoSolicitud: EstadoSolicitudes.Pendiente,
+                },
+                {
+                    UserInformador: idUser
+                }
+                ]
+            }
+        });
+
+
+        if (solicitudes.length === 0) {
+            return res.json({
+                status: 'ok',
+                data: []
+            });
+        }
+
+
+        const projects = await ModelProyecto.findAll({
+            where: {
+                id: {
+                    [Op.in]: solicitudes.map(s => s.get().FkProyecto)
+                }
+            }
+        });
+
+        return res.json({
+            status: 'ok',
+            data: projects
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: 'ERROR',
+            msg: 'Error al retornar proyectos'
         })
     }
 

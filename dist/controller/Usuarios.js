@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usersPendings = exports.confimedUser = exports.updateRolUser = exports.updateStateUsers = exports.registerUser = exports.logInUser = void 0;
+exports.getUserActive = exports.usersPendings = exports.confimedUser = exports.updateRolUser = exports.updateStateUsers = exports.registerUser = exports.logInUser = void 0;
 const Users_1 = __importDefault(require("../models/db/Users"));
 const validations_1 = require("./utils/validations");
 const jwt_1 = require("./utils/jwt");
+const sequelize_1 = require("sequelize/");
 const msgResponse_1 = require("../constant/msgResponse");
 const tables_1 = require("../constant/tables");
 const logInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -142,16 +143,16 @@ const updateStateUsers = (req, res) => __awaiter(void 0, void 0, void 0, functio
 exports.updateStateUsers = updateStateUsers;
 /**
  *
- * @param req { token, idUserPut, rol }
+ * @param req {  idUserPut, rol }
  * @param res
  */
 const updateRolUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { token, idUserPut, rol } = req.body;
+    const { idUser, idUserPut, rol } = req.body;
     const validation = validations_1.validatorRequest(req);
     if (validation) {
         return res.status(400).json(validation);
     }
-    const premissions = yield validations_1.validatePermissionsForToken(token, tables_1.Roles.admin);
+    const premissions = yield validations_1.validatePermissionsForId(idUser, tables_1.Roles.admin);
     if (!premissions) {
         return res.status(401).json({
             status: "ERROR",
@@ -228,4 +229,35 @@ const usersPendings = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.usersPendings = usersPendings;
+const getUserActive = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idUser } = req.body;
+    const premissions = yield validations_1.validatePermissionsForId(idUser, tables_1.Roles.admin);
+    if (!premissions) {
+        return res.status(401).json({
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.UnauthorizedForRequest,
+        });
+    }
+    try {
+        const users = yield Users_1.default.findAll({
+            where: {
+                EstadoUser: {
+                    [sequelize_1.Op.eq]: true
+                }
+            }
+        });
+        return res.json({
+            status: 'OK',
+            data: users
+        });
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            status: 'ERROR',
+            msg: msgResponse_1.ResponseError.ErrorServidor
+        });
+    }
+});
+exports.getUserActive = getUserActive;
 //# sourceMappingURL=Usuarios.js.map

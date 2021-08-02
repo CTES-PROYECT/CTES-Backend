@@ -22,6 +22,7 @@ router.get("/cantidad", middlewareToken, Proyectos_1.getCantidadPrject);
 router.get("/longitud/cantidad", Proyectos_1.getCantTotalLongitud);
 router.post("/", middlewareToken, Proyectos_1.getProjectPreview);
 router.get("/info/:id", middlewareToken, Proyectos_1.getAllInfoProject);
+router.get("/update/info/:id", middlewareToken, Proyectos_1.getUpdateAllInfoProject);
 router.get("/cantidad/estado", middlewareToken, Proyectos_1.getCantProyectForState);
 router.get("/cantidad/region", middlewareToken, Proyectos_1.getCantProyectForRegion);
 router.post("/add", middlewareToken, Proyectos_1.addNewProject);
@@ -30,10 +31,14 @@ router.get("/regiones", middlewareToken, Proyectos_1.getRegionesComunas);
 router.get("/:idRegion/comunas", middlewareToken, Proyectos_1.getComunasForRegion);
 router.get("/mandantes", middlewareToken, Proyectos_1.getMandantes);
 router.get("/pending", middlewareToken, Proyectos_1.getProjectPending);
+router.get("/pending/update", middlewareToken, Proyectos_1.getProjectPendingActualizacion);
 router.put("/enable", [middlewareToken,
     express_validator_1.body("enable").notEmpty(),
     express_validator_1.body("idProject").notEmpty(),
 ], Proyectos_1.changeEnable);
+router.get("/rejects", middlewareToken, Proyectos_1.getProyectRejectForId);
+router.get("/pendingid", middlewareToken, Proyectos_1.getProyectPendingForId);
+router.put("/update/:id", middlewareToken, Proyectos_1.putUpdateProject);
 //TODO: eliminar comentario para agregar proyectos desde jsonz
 //router.get("/insert/toJso",InsertProyect)
 exports.default = router;

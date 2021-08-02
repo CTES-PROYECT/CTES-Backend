@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.helperCrearProyecto = void 0;
+exports.helperCreateSolicitudNewProject = exports.helperCrearProyecto = void 0;
 const Proyecto_1 = __importDefault(require("../../../models/db/Proyecto"));
 const CreateFK_1 = require("./CreateFK");
+const SolicitudesProyectos_1 = __importDefault(require("../../../models/db/SolicitudesProyectos"));
 const helperCrearProyecto = (p) => __awaiter(void 0, void 0, void 0, function* () {
     var idContratista = null;
     if (p.NombreMandante != null) {
@@ -57,8 +58,13 @@ const helperCrearProyecto = (p) => __awaiter(void 0, void 0, void 0, function* (
     }).
         catch((e) => {
         console.log(e);
+        throw e;
     });
-    return project;
+    return project.get().id;
 });
 exports.helperCrearProyecto = helperCrearProyecto;
+const helperCreateSolicitudNewProject = (s) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield SolicitudesProyectos_1.default.create(s);
+});
+exports.helperCreateSolicitudNewProject = helperCreateSolicitudNewProject;
 //# sourceMappingURL=CreateProyectos.js.map

@@ -39,6 +39,13 @@ const ModelSolicitudesProyectos = db.define(
         key: "id",
       },
     },
+    FkProyectUpdate: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: ModelProyecto,
+        key: "id",
+      },
+    },
     FkTipoSolicitud: {
       type: DataTypes.INTEGER,
       references: {

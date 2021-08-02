@@ -51,6 +51,7 @@ interface SolicitudProyecto {
   FkEstadoSolicitud: number;
   FkProyecto: number;
   FkTipoSolicitud: number;
+  FkProyectUpdate?:number;
 }
 
 interface resultValidationToken {

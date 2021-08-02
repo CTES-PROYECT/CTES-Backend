@@ -4,7 +4,7 @@ import { EstadoProyectosConstantes, formAddProject } from "../../../constant/tab
 import ModelContratista from "../../../models/db/Contratista";
 import ModelDateProyecto from "../../../models/db/DateProyecto";
 import ModelProyecto from "../../../models/db/Proyecto";
-import { Proyectos } from "../../../models/interfaces";
+import { Proyectos, SolicitudProyecto } from "../../../models/interfaces";
 import { readFileSync } from 'fs';
 
 
@@ -22,6 +22,7 @@ import {
   createFkDate,
   createMetodoConstructivo,
 } from "./CreateFK";
+import ModelSolicitudesProyectos from "../../../models/db/SolicitudesProyectos";
 
 
 
@@ -65,7 +66,7 @@ if(p.NombreMandante!=null){
 
   }
 
-  const project = await ModelProyecto.create({
+  const project : Model = await ModelProyecto.create({
     NameProyecto: p.NombreProyecto,
     FkEstadoProyecto: p.Estado,
     FkContratista: (idContratista!=null) ? idContratista : p.NombreMandante,
@@ -76,11 +77,18 @@ if(p.NombreMandante!=null){
     MontoInversion:p.MontoProyecto,
     FkDateProyecto:FKDate,
     FkMetodoConstructivo:FkMetodoConstructivoInput
-    
   }).
   catch((e)=>{
     console.log(e);
+    throw e;
   });
 
-  return project;
+  return project.get().id;
 };
+
+
+export const helperCreateSolicitudNewProject = async (s: SolicitudProyecto )=>{
+
+  return await ModelSolicitudesProyectos.create(s);
+
+}

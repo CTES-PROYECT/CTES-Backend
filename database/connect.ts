@@ -24,26 +24,59 @@ export default db;
  INSERT INTO "Roles" (name) VALUES('VALIDADOR');
  INSERT INTO "Roles" (name) VALUES('INFORMADOR');
  INSERT INTO "Roles" (name) VALUES('ADMIN');
- */
 
-/**
- * INSERT INTO "EstadoProyecto" ("NameState") VALUES('EIADIA');
+ INSERT INTO "EstadoProyecto" ("NameState") VALUES('EIADIA');
 INSERT INTO "EstadoProyecto" ("NameState") VALUES('PREINVERSION');
 INSERT INTO "EstadoProyecto" ("NameState") VALUES('INGENIERIA');
 INSERT INTO "EstadoProyecto" ("NameState") VALUES('LICITACION');
 INSERT INTO "EstadoProyecto" ("NameState") VALUES('CONSTRUCCION');
 INSERT INTO "EstadoProyecto" ("NameState") VALUES('OPERACION & MANTENIMIENTO');
- */
-
-/**
- * INSERT INTO "Clasificacion" ("NameClasificacion") VALUES('MINERO');
+ 
+INSERT INTO "Clasificacion" ("NameClasificacion") VALUES('MINERO');
 INSERT INTO "Clasificacion" ("NameClasificacion") VALUES('HIDRAULICO');
 INSERT INTO "Clasificacion" ("NameClasificacion") VALUES('CIVIL');
 INSERT INTO "Clasificacion" ("NameClasificacion") VALUES('ESPACIOS SUBTERRANEOS');
+
+
+INSERT INTO "TipoSolicitudes" ("NameSolicitudes") Values('Actualizacion');
+INSERT INTO "TipoSolicitudes" ("NameSolicitudes") Values('Eliminar');
+INSERT INTO "TipoSolicitudes" ("NameSolicitudes") Values('Agregar');
+
+
+INSERT INTO "EstadosSolicitudes" ("NameEstadoSolicitud") Values('Pendiente');
+INSERT INTO "EstadosSolicitudes" ("NameEstadoSolicitud") Values('Aceptado');
+INSERT INTO "EstadosSolicitudes" ("NameEstadoSolicitud") Values('Rechazado');
+
+
+//TRIGGER 
+
+create function projectDisparador() returns trigger
+as
+$$
+begin
+
+if new."FkEstadoSolicitud"=2 then
+	update "Proyectos" SET "Enabled"=true WHERE id=old."FkProyecto";
+else 
+	update "Proyectos" SET "Enabled"=false WHERE id=old."FkProyecto";
+end if;
+return new;
+End
+$$
+Language plpgsql
+
+create trigger TR_updateSolicitud after Update on "SolicitudesProyectos"
+for each row
+execute procedure projectDisparador();
+
  */
 /**
+ * 
+ * 
 DELETE FROM "Proyectos";
 DELETE FROM "Caracteristicas";
 DELETE FROM "DateProyecto";
 DELETE FROM "Localizacion";
+
+
  */

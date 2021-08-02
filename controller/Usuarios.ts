@@ -9,7 +9,7 @@ import {
     verifyUserById, validatePermissionsForId,
 } from "./utils/validations";
 import {generateToken} from "./utils/jwt";
-import {Model} from "sequelize/types";
+import {Op} from "sequelize/";
 import {ResponseCorrect, ResponseError} from "../constant/msgResponse";
 import {Roles} from "../constant/tables";
 
@@ -149,18 +149,18 @@ export const updateStateUsers = async (req: Request, res: Response) => {
 };
 /**
  *
- * @param req { token, idUserPut, rol }
+ * @param req {  idUserPut, rol }
  * @param res
  */
 export const updateRolUser = async (req: Request, res: Response) => {
-    const {token, idUserPut, rol} = req.body;
+    const {idUser, idUserPut, rol} = req.body;
     const validation = validatorRequest(req);
 
     if (validation) {
         return res.status(400).json(validation);
     }
 
-    const premissions: boolean = await validatePermissionsForToken(token, Roles.admin);
+    const premissions: boolean = await validatePermissionsForId(idUser, Roles.admin);
     if (!premissions) {
         return res.status(401).json({
             status: "ERROR",
@@ -243,4 +243,40 @@ export const usersPendings = async (req: Request, res: Response) => {
         });
     }
 
+}
+export const getUserActive=async(req: Request, res: Response)=>{
+    const {idUser} = req.body;
+
+    const premissions: boolean = await validatePermissionsForId(idUser, Roles.admin);
+
+    if (!premissions) {
+        return res.status(401).json({
+            status: "ERROR",
+            msg: ResponseError.UnauthorizedForRequest,
+        });
+    }
+
+
+    try {
+
+        const users= await ModelUsers.findAll({
+            where:{
+                EstadoUser:{
+                    [Op.eq]:true
+                }
+            }
+        });
+
+        return res.json({
+            status: 'OK',
+            data: users
+        });
+
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            status: 'ERROR',
+            msg: ResponseError.ErrorServidor
+        });
+    }
 }

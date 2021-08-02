@@ -32,9 +32,10 @@ router.put("/update/state", [
     express_validator_1.body("condition").isBoolean(),
 ], Usuarios_1.updateStateUsers);
 router.put("/update/rol", [
-    express_validator_1.body("token").isString(),
+    middlewareToken,
     express_validator_1.body("idUserPut").notEmpty(),
     express_validator_1.body("rol").notEmpty(),
 ], Usuarios_1.updateRolUser);
+router.get("/active", middlewareToken, Usuarios_1.getUserActive);
 exports.default = router;
 //# sourceMappingURL=Usuarios.js.map

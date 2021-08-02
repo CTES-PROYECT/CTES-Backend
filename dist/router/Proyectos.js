@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProyectPendingForId = exports.getProyectRejectForId = exports.changeEnable = exports.putUpdateProject = exports.addNewProject = exports.getComunasForRegion = exports.getMandantes = exports.getRegionesComunas = exports.getCantTotalLongitud = exports.getUpdateAllInfoProject = exports.getAllInfoProject = exports.getCantidadPrject = exports.getCantProyectForRegion = exports.getCantProyectForType = exports.getCantProyectForState = exports.getProjectPendingActualizacion = exports.getProjectPending = exports.getProjectPreview = void 0;
+exports.getProyectPendingForId = exports.getProyectRejectForId = exports.changeEnable = exports.putUpdateProject = exports.addNewProject = exports.getComunasForRegion = exports.getMandantes = exports.getRegionesComunas = exports.getCantTotalLongitud = exports.getAllInfoProject = exports.getCantidadPrject = exports.getCantProyectForRegion = exports.getCantProyectForType = exports.getCantProyectForState = exports.getProjectPendingActualizacion = exports.getProjectPending = exports.getProjectPreview = void 0;
 const msgResponse_1 = require("../constant/msgResponse");
 const tables_1 = require("../constant/tables");
 const Proyecto_1 = __importDefault(require("../models/db/Proyecto"));
@@ -196,13 +196,6 @@ const getCantProyectForType = (req, res) => __awaiter(void 0, void 0, void 0, fu
 exports.getCantProyectForType = getCantProyectForType;
 const getCantProyectForRegion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const total = yield Proyecto_1.default.count();
-    const locationsNotValid = yield Proyecto_1.default.findAll({
-        where: {
-            Enabled: {
-                [sequelize_1.Op.eq]: true
-            }
-        }
-    });
     const resp = yield Localizacion_1.default.findAll({
         attributes: [
             'FkRegion',
@@ -217,11 +210,6 @@ const getCantProyectForRegion = (req, res) => __awaiter(void 0, void 0, void 0, 
                 "id",]
         ],
         group: ['FkRegion'],
-        where: {
-            id: {
-                [sequelize_1.Op.in]: locationsNotValid.map(l => l.get().FkLocalizacion)
-            }
-        }
     });
     if (resp) {
         return res.json({
@@ -277,21 +265,6 @@ const getAllInfoProject = (req, res) => __awaiter(void 0, void 0, void 0, functi
     });
 });
 exports.getAllInfoProject = getAllInfoProject;
-const getUpdateAllInfoProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params;
-    const proyectForId = yield Proyecto_1.default.findByPk(id, {
-        attributes: {
-            exclude: tables_1.AttributesExcludesFKProyect,
-            include: tables_1.AttributesIncludesOneProyectUpdate,
-        },
-    });
-    return res.json({
-        status: "OK",
-        msg: msgResponse_1.ResponseCorrect.LoadInfoProject,
-        data: proyectForId,
-    });
-});
-exports.getUpdateAllInfoProject = getUpdateAllInfoProject;
 const getCantTotalLongitud = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const CantProject = yield Proyecto_1.default.findAll({
         where: {
@@ -425,8 +398,7 @@ const addNewProject = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.addNewProject = addNewProject;
 const putUpdateProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { idUser, form } = req.body;
-    const { id } = req.params;
+    const { idUser, form, projectUpdate } = req.body;
     const premissions = yield validations_1.validatePermissionsForId(idUser, tables_1.Roles.informador);
     if (!premissions) {
         return res.status(401).json({
@@ -439,9 +411,9 @@ const putUpdateProject = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const solicitud = yield CreateProyectos_1.helperCreateSolicitudNewProject({
             UserInformador: idUser,
             FkEstadoSolicitud: tables_1.EstadoSolicitudes.Pendiente,
-            FkTipoSolicitud: tables_1.TipoSolicitudesConstantes.Actualizacion,
+            FkTipoSolicitud: tables_1.TipoSolicitudesConstantes.Agregar,
             FkProyecto: p,
-            FkProyectUpdate: parseInt(id)
+            FkProyectUpdate: projectUpdate
         });
         return res.json({
             status: 'OK',
@@ -478,28 +450,9 @@ const changeEnable = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 }
             }
         });
-        const projectDelete = solicitud === null || solicitud === void 0 ? void 0 : solicitud.get().FkProyectUpdate;
-        solicitud === null || solicitud === void 0 ? void 0 : solicitud.update({
-            FkEstadoSolicitud: enable == true ? tables_1.EstadoSolicitudes.Aceptado : tables_1.EstadoSolicitudes.Rechazado,
-            FkProyectUpdate: null
-        });
+        console.log(enable);
+        solicitud === null || solicitud === void 0 ? void 0 : solicitud.update({ FkEstadoSolicitud: enable == true ? tables_1.EstadoSolicitudes.Aceptado : tables_1.EstadoSolicitudes.Rechazado });
         yield (solicitud === null || solicitud === void 0 ? void 0 : solicitud.save());
-        yield SolicitudesProyectos_1.default.update({
-            FkProyecto: solicitud === null || solicitud === void 0 ? void 0 : solicitud.get().FkProyecto,
-        }, {
-            where: {
-                FkProyecto: {
-                    [sequelize_1.Op.eq]: projectDelete
-                }
-            }
-        });
-        yield Proyecto_1.default.destroy({
-            where: {
-                id: {
-                    [sequelize_1.Op.eq]: projectDelete
-                }
-            }
-        });
         return res.json({
             status: 'OK',
             msg: 'Projecto Actualizado con exito'

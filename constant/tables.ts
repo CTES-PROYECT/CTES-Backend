@@ -10,7 +10,7 @@ export const Roles = {
 export const TipoSolicitudesConstantes = {
   Actualizacion: 1,
   Eliminar: 2,
-  Observacion: 3,
+  Agregar: 3,
 };
 export const EstadoProyectosConstantes = {
   EIADIA: 1,
@@ -21,6 +21,11 @@ export const EstadoProyectosConstantes = {
   OPERACIONMANTENIMIENTO: 6,
 };
 
+export const EstadoSolicitudes = {
+  Pendiente: 1,
+  Aceptado: 2,
+  Rechazado: 3
+}
 
 export const EstadoProyectosConstantesArray = [
   {name:"En evaluación",id: 1},
@@ -121,6 +126,7 @@ export const AttributesIncludesProyectPreview: (string | ProjectionAlias)[] = [
   ],
 ];
 
+
 export const AttributesIncludesOneProyect: (string | ProjectionAlias)[] = [
   [
     Sequelize.literal(`(
@@ -198,6 +204,108 @@ export const AttributesIncludesOneProyect: (string | ProjectionAlias)[] = [
   [
     Sequelize.literal(`(
             SELECT "m"."FullName" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
+    "NameContratista",
+  ],
+  [
+    Sequelize.literal(`(
+            SELECT "m"."Email" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
+    "EmailContratista",
+  ],
+  [
+    Sequelize.literal(`(
+            SELECT "m"."NumeroTelefono" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
+    "NumeroTelefonoContratista",
+  ],
+  [
+    Sequelize.literal(`(
+            SELECT "m"."Direccion" FROM "OfIngenieria" AS m WHERE m.id = "Proyectos"."FkOfIngenieria")`),
+    "DireccionOfIngenieria",
+  ],
+  [
+    Sequelize.literal(`(
+            SELECT "com"."NameComuna" FROM "OfIngenieria" AS ofcina inner join "Comunas" as com on ofcina."FkComuna"=com."id" WHERE ofcina.id = "Proyectos"."FkOfIngenieria")`),
+    "ComunaOfIngenieria",
+  ],
+];
+
+
+export const AttributesIncludesOneProyectUpdate: (string | ProjectionAlias)[] = [
+  [
+    Sequelize.literal(`(
+            SELECT "id" FROM "EstadoProyecto" AS e WHERE e.id = "Proyectos"."FkEstadoProyecto")`),
+    "Estado",
+  ],
+  [
+    Sequelize.literal(`(
+        SELECT "Regiones"."id"
+        FROM "Localizacion" inner join "Regiones" on "Localizacion"."FkRegion" = "Regiones"."id"
+        WHERE
+             "Localizacion"."id" = "Proyectos"."FkLocalizacion")`),
+    "Region",
+  ],
+  [
+    Sequelize.literal(`(
+        SELECT "Comunas"."id"
+        FROM "Localizacion" inner join "Comunas" on "Localizacion"."FkComuna" = "Comunas"."id"
+        WHERE
+             "Localizacion"."id" = "Proyectos"."FkLocalizacion")`),
+    "Comuna",
+  ],
+  [
+    Sequelize.literal(`(
+      SELECT "DateProyecto"."FechaLicitacion"
+      FROM "DateProyecto" 
+      WHERE
+           "DateProyecto"."id" = "Proyectos"."FkDateProyecto" )`),
+    "FechaLicitacion",
+  ],
+  [
+    Sequelize.literal(`(
+      SELECT "DateProyecto"."FechaInicioObras"
+      FROM "DateProyecto" 
+      WHERE
+           "DateProyecto"."id" = "Proyectos"."FkDateProyecto" )`),
+    "FechaInicioObras",
+  ],
+  [
+    Sequelize.literal(`(
+      SELECT "DateProyecto"."PlazoEjecucion"
+      FROM "DateProyecto" 
+      WHERE
+           "DateProyecto"."id" = "Proyectos"."FkDateProyecto" )`),
+    "PlazoEjecucion",
+  ],
+  [
+    Sequelize.literal(`(
+            SELECT "m"."NameMetodo" FROM "MetodoConstructivo" AS m WHERE m.id = "Proyectos"."FkMetodoConstructivo")`),
+    "MetodoConstructivo",
+  ],
+  [
+    Sequelize.literal(`(
+            SELECT "m"."id" FROM "Clasificacion" AS m WHERE m.id = "Proyectos"."FkClasificacion")`),
+    "Clasificacion",
+  ],
+
+  [
+    Sequelize.literal(`(
+            SELECT "m"."Longitud" FROM "Caracteristicas" AS m WHERE m.id = "Proyectos"."FkCaracteristicas")`),
+    "Longitud",
+  ],
+
+  [
+    Sequelize.literal(`(
+            SELECT "m"."Seccion" FROM "Caracteristicas" AS m WHERE m.id = "Proyectos"."FkCaracteristicas")`),
+    "Seccion",
+  ],
+
+  [
+    Sequelize.literal(`(
+            SELECT "m"."Pendiente" FROM "Caracteristicas" AS m WHERE m.id = "Proyectos"."FkCaracteristicas")`),
+    "Pendiente",
+  ],
+  [
+    Sequelize.literal(`(
+            SELECT "m"."id" FROM "Contratista" AS m WHERE m.id = "Proyectos"."FkContratista")`),
     "NameContratista",
   ],
   [

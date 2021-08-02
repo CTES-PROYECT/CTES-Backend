@@ -41,6 +41,13 @@ const ModelSolicitudesProyectos = connect_1.default.define("SolicitudesProyectos
             key: "id",
         },
     },
+    FkProyectUpdate: {
+        type: sequelize_1.DataTypes.INTEGER,
+        references: {
+            model: Proyecto_1.default,
+            key: "id",
+        },
+    },
     FkTipoSolicitud: {
         type: sequelize_1.DataTypes.INTEGER,
         references: {
