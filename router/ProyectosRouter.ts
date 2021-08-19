@@ -12,6 +12,9 @@ import {
   getCantTotalLongitud,
   getComunasForRegion,
   getMandantes,
+  getProjectForClasification,
+  getProjectForEstado,
+  getProjectForRegion,
   getProjectPending,
   getProjectPendingActualizacion,
   getProjectPreview,
@@ -65,6 +68,9 @@ router.put("/enable",[middlewareToken,
 router.get("/rejects",middlewareToken,getProyectRejectForId);
 router.get("/pendingid",middlewareToken,getProyectPendingForId);
 router.put("/update/:id",middlewareToken,putUpdateProject);
+router.get('/search/region/:id',middlewareToken,getProjectForRegion);
+router.get('/search/estado/:id',middlewareToken,getProjectForEstado);
+router.get('/search/clasificacion/:id',middlewareToken,getProjectForClasification);
 
 //TODO: eliminar comentario para agregar proyectos desde jsonz
 //router.get("/insert/toJso",InsertProyect)

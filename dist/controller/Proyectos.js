@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProyectPendingForId = exports.getProyectRejectForId = exports.changeEnable = exports.putUpdateProject = exports.addNewProject = exports.getComunasForRegion = exports.getMandantes = exports.getRegionesComunas = exports.getCantTotalLongitud = exports.getUpdateAllInfoProject = exports.getAllInfoProject = exports.getCantidadPrject = exports.getCantProyectForRegion = exports.getCantProyectForType = exports.getCantProyectForState = exports.getProjectPendingActualizacion = exports.getProjectPending = exports.getProjectPreview = void 0;
+exports.getProjectForClasification = exports.getProjectForEstado = exports.getProjectForRegion = exports.getProyectPendingForId = exports.getProyectRejectForId = exports.changeEnable = exports.putUpdateProject = exports.addNewProject = exports.getComunasForRegion = exports.getMandantes = exports.getRegionesComunas = exports.getCantTotalLongitud = exports.getUpdateAllInfoProject = exports.getAllInfoProject = exports.getCantidadPrject = exports.getCantProyectForRegion = exports.getCantProyectForType = exports.getCantProyectForState = exports.getProjectPendingActualizacion = exports.getProjectPending = exports.getProjectPreview = void 0;
 const msgResponse_1 = require("../constant/msgResponse");
 const tables_1 = require("../constant/tables");
 const Proyecto_1 = __importDefault(require("../models/db/Proyecto"));
@@ -319,7 +319,6 @@ const getCantTotalLongitud = (req, res) => __awaiter(void 0, void 0, void 0, fun
             longitudTotal = longitudTotal + parseInt(p.get().Longitud);
         }
     });
-    console.log(longitudTotal);
     return res.json({
         status: "OK",
         msg: msgResponse_1.ResponseCorrect.LoadInfoProject,
@@ -610,4 +609,97 @@ const getProyectPendingForId = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.getProyectPendingForId = getProyectPendingForId;
+const getProjectForRegion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const Proyects = yield Proyecto_1.default.findAll({
+            attributes: {
+                exclude: tables_1.AttributesExcludesProyectPreview,
+                include: tables_1.AttributesIncludesProyectPreview,
+            },
+            where: {
+                Enabled: {
+                    [sequelize_1.Op.eq]: true
+                },
+            }
+        });
+        return res.json({
+            status: "OK",
+            msg: msgResponse_1.ResponseCorrect.LoadProjectSuccefly,
+            data: Proyects.filter((p) => p.get().IdRegion === parseInt(id)),
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.ErrorServidor,
+        });
+    }
+});
+exports.getProjectForRegion = getProjectForRegion;
+const getProjectForEstado = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const Proyects = yield Proyecto_1.default.findAll({
+            attributes: {
+                exclude: tables_1.AttributesExcludesProyectPreview,
+                include: tables_1.AttributesIncludesProyectPreview,
+            },
+            where: {
+                Enabled: {
+                    [sequelize_1.Op.eq]: true
+                },
+                FkEstadoProyecto: {
+                    [sequelize_1.Op.eq]: parseInt(id)
+                }
+            }
+        });
+        return res.json({
+            status: "OK",
+            msg: msgResponse_1.ResponseCorrect.LoadProjectSuccefly,
+            data: Proyects,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.ErrorServidor,
+        });
+    }
+});
+exports.getProjectForEstado = getProjectForEstado;
+const getProjectForClasification = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const Proyects = yield Proyecto_1.default.findAll({
+            attributes: {
+                exclude: tables_1.AttributesExcludesProyectPreview,
+                include: tables_1.AttributesIncludesProyectPreview,
+            },
+            where: {
+                Enabled: {
+                    [sequelize_1.Op.eq]: true
+                },
+                FkClasificacion: {
+                    [sequelize_1.Op.eq]: parseInt(id)
+                }
+            }
+        });
+        return res.json({
+            status: "OK",
+            msg: msgResponse_1.ResponseCorrect.LoadProjectSuccefly,
+            data: Proyects,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: "ERROR",
+            msg: msgResponse_1.ResponseError.ErrorServidor,
+        });
+    }
+});
+exports.getProjectForClasification = getProjectForClasification;
 //# sourceMappingURL=Proyectos.js.map

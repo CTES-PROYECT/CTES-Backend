@@ -49,7 +49,7 @@ export const createContratistaFK = async (
       FullName: { [Op.eq]: contratista.FullName },
     },
   });
-  console.log(exist == null);
+
   if (exist == null) {
     const contra = await ModelContratista.create(contratista);
     return contra.get().id;

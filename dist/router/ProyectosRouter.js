@@ -39,6 +39,9 @@ router.put("/enable", [middlewareToken,
 router.get("/rejects", middlewareToken, Proyectos_1.getProyectRejectForId);
 router.get("/pendingid", middlewareToken, Proyectos_1.getProyectPendingForId);
 router.put("/update/:id", middlewareToken, Proyectos_1.putUpdateProject);
+router.get('/search/region/:id', middlewareToken, Proyectos_1.getProjectForRegion);
+router.get('/search/estado/:id', middlewareToken, Proyectos_1.getProjectForEstado);
+router.get('/search/clasificacion/:id', middlewareToken, Proyectos_1.getProjectForClasification);
 //TODO: eliminar comentario para agregar proyectos desde jsonz
 //router.get("/insert/toJso",InsertProyect)
 exports.default = router;

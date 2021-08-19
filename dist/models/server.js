@@ -56,7 +56,7 @@ class Server {
     middlewares() {
         var corsOptions = {
             origin: 'https://ctes.herokuapp.com/',
-            optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+            optionsSuccessStatus: 200
         };
         this.app.use(cors_1.default(corsOptions));
         this.app.use(express_1.default.json());

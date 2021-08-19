@@ -109,6 +109,13 @@ exports.AttributesIncludesProyectPreview = [
         WHERE
              "Localizacion"."id" = "Proyectos"."FkLocalizacion")`),
         "Region",
+    ], [
+        sequelize_1.Sequelize.literal(`(
+        SELECT "Regiones"."id"
+        FROM "Localizacion" inner join "Regiones" on "Localizacion"."FkRegion" = "Regiones"."id"
+        WHERE
+             "Localizacion"."id" = "Proyectos"."FkLocalizacion")`),
+        "IdRegion",
     ],
     [
         sequelize_1.Sequelize.literal(`(

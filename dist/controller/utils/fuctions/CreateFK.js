@@ -45,7 +45,6 @@ const createContratistaFK = (contratista) => __awaiter(void 0, void 0, void 0, f
             FullName: { [sequelize_1.Op.eq]: contratista.FullName },
         },
     });
-    console.log(exist == null);
     if (exist == null) {
         const contra = yield Contratista_1.default.create(contratista);
         return contra.get().id;

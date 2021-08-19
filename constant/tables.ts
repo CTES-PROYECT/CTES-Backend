@@ -115,6 +115,13 @@ export const AttributesIncludesProyectPreview: (string | ProjectionAlias)[] = [
         WHERE
              "Localizacion"."id" = "Proyectos"."FkLocalizacion")`),
     "Region",
+  ],[
+    Sequelize.literal(`(
+        SELECT "Regiones"."id"
+        FROM "Localizacion" inner join "Regiones" on "Localizacion"."FkRegion" = "Regiones"."id"
+        WHERE
+             "Localizacion"."id" = "Proyectos"."FkLocalizacion")`),
+    "IdRegion",
   ],
   [
     Sequelize.literal(`(

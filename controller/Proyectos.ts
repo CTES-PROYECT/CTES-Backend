@@ -340,7 +340,7 @@ export const getCantTotalLongitud = async (req: Request, res: Response) => {
             longitudTotal = longitudTotal + parseInt(p.get().Longitud);
         }
     })
-    console.log(longitudTotal);
+
     return res.json({
         status: "OK",
         msg: ResponseCorrect.LoadInfoProject,
@@ -683,3 +683,114 @@ export const getProyectPendingForId = async (req: Request, res: Response) => {
     }
 
 }
+
+
+
+export const getProjectForRegion= async (req: Request, res: Response) => {
+    try {
+
+        const { id } = req.params;
+
+        const Proyects = await ModelProyecto.findAll({
+            attributes: {
+                exclude: AttributesExcludesProyectPreview,
+                include: AttributesIncludesProyectPreview,
+            },
+            where: {
+                Enabled: {
+                    [Op.eq]: true
+                },
+            }
+        });
+        
+
+        return res.json({
+            status: "OK",
+            msg: ResponseCorrect.LoadProjectSuccefly,
+            data: Proyects.filter((p)=>p.get().IdRegion===parseInt(id)),
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: "ERROR",
+            msg: ResponseError.ErrorServidor,
+        });
+    }
+};
+
+export const getProjectForEstado= async (req: Request, res: Response) => {
+    try {
+
+        const { id } = req.params;
+
+        const Proyects = await ModelProyecto.findAll({
+            attributes: {
+                exclude: AttributesExcludesProyectPreview,
+                include: AttributesIncludesProyectPreview,
+            },
+            where: {
+                Enabled: {
+                    [Op.eq]: true
+                },
+                FkEstadoProyecto:{
+                    [Op.eq]: parseInt(id)
+                }
+                
+            }
+        });
+        
+
+        return res.json({
+            status: "OK",
+            msg: ResponseCorrect.LoadProjectSuccefly,
+            data: Proyects,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: "ERROR",
+            msg: ResponseError.ErrorServidor,
+        });
+    }
+};
+
+
+export const getProjectForClasification= async (req: Request, res: Response) => {
+    try {
+
+        const { id } = req.params;
+
+        const Proyects = await ModelProyecto.findAll({
+            attributes: {
+                exclude: AttributesExcludesProyectPreview,
+                include: AttributesIncludesProyectPreview,
+            },
+            where: {
+                Enabled: {
+                    [Op.eq]: true
+                },
+                FkClasificacion:{
+                    [Op.eq]: parseInt(id)
+                }
+                
+            }
+        });
+        
+
+        return res.json({
+            status: "OK",
+            msg: ResponseCorrect.LoadProjectSuccefly,
+            data: Proyects,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: "ERROR",
+            msg: ResponseError.ErrorServidor,
+        });
+    }
+};
+
+
+
+
